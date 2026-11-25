@@ -4,45 +4,37 @@ Last updated: 2026-11-25
 
 ## Current phase
 
-Phase 0: Research. Complete. **Waiting at GATE 1** for Adam's approval. No game
-code is to be written until then.
+Phase 1: Design document. `docs/GDD.md` draft 1 is written. **Waiting at GATE 2**
+for Adam's review. No game code is to be written until GATE 2 is resolved.
 
 ## Working environment
 
 - Running on Linux (cloud container), not the Mac mini. The Mac mini checks in
   brief section 2.1 are skipped until Adam says he is on the Mac.
 - Repository: `adamlee117097/apps`, branch `claude/new-session-jfevon`,
-  directory `necromancer-tactics/`.
+  directory `necromancer-tactics/`. Draft PR #1.
 
 ## Done
 
-- Read the project brief.
-- Created README, STATUS, DECISIONS, .gitignore.
-- Re-verified the iPhone Duo hardware facts against Apple's spec page.
-
-- `docs/RESEARCH.md` complete, with a recommendation in section 8: native
-  Swift, SwiftUI around a SpriteKit map, rules in a pure Swift package.
+- Phase 0 research (`docs/RESEARCH.md`). GATE 1 approved 2026-11-25: native
+  Swift, SwiftUI + SpriteKit. See `docs/DECISIONS.md`.
+- GDD draft 1.
 
 ## Next
 
-1. GATE 1: Adam answers the questions below.
-2. After approval: Phase 1 GDD, then GATE 2.
-3. After GATE 2: rules module, data files, unit tests and GitHub Actions on
-   Linux. No rendering, UI or Xcode project until on the Mac.
-4. First task on the Mac: the checks in brief 2.1, then a fold/unfold prototype
-   in the iPhone Duo simulator, and read the display scale factors
-   (RESEARCH.md 8.4).
+1. GATE 2: Adam reviews the GDD and answers its section 13.
+2. After GATE 2, on Linux: Swift package for the rules module, JSON data files
+   for units and the slice map, unit tests, and a GitHub Actions workflow that
+   runs `swift test`. No rendering, UI or Xcode project until on the Mac.
+3. First tasks on the Mac: the checks in brief 2.1; sign in to Xcode with a
+   free Apple Account; a fold/unfold prototype in the iPhone Duo simulator;
+   read the display scale factors (RESEARCH.md 8.4).
 
-## Open questions for Adam (GATE 1)
+## Open questions for Adam (GATE 2)
 
-1. Approve native Swift (SwiftUI + SpriteKit) as the engine?
-2. Which Apple Developer account do you have: none, free, or paid?
-3. Keep the game in `necromancer-tactics/` in `adamlee117097/apps`, or move to a
-   dedicated repository?
-4. Mac mini model and macOS version, if known.
-5. Do you own an Apple Pencil (USB-C), and is the phone on iOS 27.2 or later?
-6. Firm up the reference-game research (needs more sites allowed), or is it
-   enough for the GDD?
+The twelve items in `docs/GDD.md` section 13. Still unanswered from GATE 1, and
+not blocking: Mac mini model and macOS version; whether Adam owns an Apple
+Pencil (USB-C) and has iOS 27.2 or later.
 
 ## Things a future session should know
 

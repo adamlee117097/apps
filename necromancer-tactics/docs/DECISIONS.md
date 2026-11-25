@@ -22,10 +22,30 @@ Each entry: date, decision, reason. Newest at the bottom.
 - **Reason:** The default environment blocked these hosts, and the brief
   requires primary sources. Adam approved it on the approval prompt.
 
+## 2026-11-25: GATE 1 approved
+
+Adam's words: "I'll go with your recommendations and I don't have a developer
+account."
+
+- **Engine:** native Swift. SwiftUI for menus, HUD and fold layouts; SpriteKit
+  for the map; game rules in a pure Swift package tested on Linux.
+  Reason: the iPhone Duo fold APIs are first-party only, iOS 27 support is
+  certain, and Linux work carries over unchanged. Full reasoning in
+  RESEARCH.md section 8.
+- **Build pipeline:** Xcode 27.2 on macOS Tahoe 26.6 or later; iPhone Duo on
+  iOS 27.2 or later.
+- **Apple account:** Adam has no developer account. Plan: sign in to Xcode with
+  a free Apple Account (Personal Team) when on the Mac. Installs expire after 7
+  days. The paid program is deferred until TestFlight or release is wanted.
+- **Repository:** stays in `necromancer-tactics/` inside `adamlee117097/apps`
+  (the provisional choice, which Adam did not change).
+- **Reference-game research:** left at its current level. Adam did not ask for
+  more; it can be revisited.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |
 |---|---|---|---|
-| GATE 1: engine, build pipeline, feature feasibility | Presented 2026-11-25, awaiting Adam | | Recommendation: native Swift, SwiftUI + SpriteKit |
-| GATE 2: GDD review, items in brief 3.5 | Not reached | | |
+| GATE 1: engine, build pipeline, feature feasibility | Approved | 2026-11-25 | Native Swift: SwiftUI + SpriteKit, rules in a pure Swift package |
+| GATE 2: GDD review, items in brief 3.5 | Presented 2026-11-25, awaiting Adam | | |
 | GATE 3: vertical slice played on device | Not reached | | |

@@ -11,12 +11,12 @@ the bodies on the field. Original world, characters and lore.
 | `docs/STATUS.md` | Current phase, what is done, what is next, open questions. Read this first. |
 | `docs/DECISIONS.md` | Log of gate decisions with dates and reasons. |
 | `docs/RESEARCH.md` | Phase 0 research with sources. |
-| `docs/GDD.md` | Game design document (Phase 1, not written yet). |
+| `docs/GDD.md` | Game design document. |
 
 ## Running the tests
 
-There is no code yet. Game code starts only after GATE 1 (engine decision) is
-approved. This section will be filled in when the rules module exists.
+There is no code yet. Game code starts only after GATE 2 (design review) is
+resolved. It will be a Swift package tested with `swift test`. This section will be filled in when the rules module exists.
 
 ## Repository note
 

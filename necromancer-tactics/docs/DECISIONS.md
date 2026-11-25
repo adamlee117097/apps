@@ -62,6 +62,9 @@ sprites. And we'll workshop the final title."
   sheets out of it. The choice between pixel art and high-resolution 2D is
   still open and should follow the display measurements on the Mac
   (RESEARCH.md 6.1, 6.2).
+  Adam, later the same day: "The api and accounts are in memory of grave wrate",
+  meaning the setup used for his Gravewright project. Not reachable from the
+  cloud session; to be read on his computer.
 - **Title:** to be workshopped. "Necromancer Tactics" stays as the working
   title.
 

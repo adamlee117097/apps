@@ -54,8 +54,12 @@ or Adam's answers to the open questions below.
 ## Open questions for Adam
 
 1. GDD section 13 items 5 to 12: are the provisional defaults right?
-2. Which Google image generation product do you mean (for example, through
-   the Gemini app, or an API)? Do you already have access to it?
+2. Answered 2026-11-25: the Google image API and accounts are the ones used
+   for Adam's earlier Gravewright project, recorded in that project's Claude
+   memory on Adam's own computer. That memory is not readable from a cloud
+   session and no computer folder was shared, so the product, model and
+   account are still unknown here. A session on that computer can read them.
+   The API key must never be committed or pasted into chat.
 3. Not blocking: Mac mini model and macOS version; whether you own an Apple
    Pencil (USB-C) and have iOS 27.2 or later.
 

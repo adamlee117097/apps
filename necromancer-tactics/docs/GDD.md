@@ -523,6 +523,11 @@ assumption.
 
 ## 13. Open items for GATE 2
 
+Update 2026-11-25: items 1 to 4 are decided (hybrid; App Store release;
+sprites from Google's image generation; title to be workshopped). Items 5 to
+12 are in use as provisional defaults and await Adam's confirmation. See
+`DECISIONS.md`.
+
 From the brief:
 
 1. **Campaign structure:** linear, roguelite, or hybrid. Recommendation:

@@ -1,0 +1,25 @@
+{
+  "advantage": { "numerator": 3, "denominator": 2 },
+  "disadvantage": { "numerator": 3, "denominator": 4 },
+  "typeChart": {
+    "bone":   { "flesh": "+", "spirit": "-", "steel": "-", "flame": "+" },
+    "flesh":  { "bone": "-", "spirit": "+", "flame": "-", "holy": "+" },
+    "spirit": { "bone": "+", "flesh": "-", "steel": "+", "holy": "-" },
+    "steel":  { "bone": "+", "spirit": "-" },
+    "flame":  { "bone": "-", "flesh": "+" },
+    "holy":   { "flesh": "-", "spirit": "+" },
+    "sovereign": {}
+  },
+  "roughMoveCost": 2,
+  "roughGuardBonus": 1,
+  "bulwarkGuardBonus": 1,
+  "feedHeal": 5,
+  "mendHeal": 6,
+  "mendRange": 2,
+  "healAmount": 6,
+  "healRange": 2,
+  "burnRange": 2,
+  "purgeRange": 1,
+  "consecrateRange": 2,
+  "maxConsecrationsPerCaster": 2
+}

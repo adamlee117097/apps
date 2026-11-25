@@ -15,7 +15,6 @@ xcuserdata/
 # Swift Package Manager
 .build/
 .swiftpm/
-Packages/
 
 # Signing material and secrets: never commit
 *.p12

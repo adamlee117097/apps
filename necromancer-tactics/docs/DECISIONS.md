@@ -42,10 +42,62 @@ account."
 - **Reference-game research:** left at its current level. Adam did not ask for
   more; it can be revisited.
 
+## 2026-11-25: GATE 2, items from brief section 3.5
+
+Adam's words: "I would say it's a hybrid structure. I would like to eventually
+App Store release it. And let's use the Google image generation to make
+sprites. And we'll workshop the final title."
+
+- **Campaign structure:** hybrid. A fixed three-act spine with hand-made key
+  battles, and generated raids between them. Built linear first.
+- **Release:** eventual App Store release. Consequences: the paid Apple
+  Developer Program ($99 per year) will be needed before TestFlight or
+  submission; all art and audio must be cleared for commercial use; App Store
+  screenshots for both iPhone Duo displays will be needed.
+- **Art:** sprites made with Google's image generation. Not yet researched, and
+  to be done from primary sources before any art is produced: which Google
+  product and model, its terms for commercial use of generated images, any
+  watermarking or disclosure requirements, App Store rules on generated
+  content, and how to keep a consistent style and get transparent sprite
+  sheets out of it. The choice between pixel art and high-resolution 2D is
+  still open and should follow the display measurements on the Mac
+  (RESEARCH.md 6.1, 6.2).
+- **Title:** to be workshopped. "Necromancer Tactics" stays as the working
+  title.
+
+## 2026-11-25: GDD section 13 items 5 to 12, provisional
+
+Adam answered the four brief items and did not comment on items 5 to 12.
+Claude proceeded with the GDD's proposals as provisional defaults so the rules
+module could be built. Each is a data or small code change to reverse:
+
+- No randomness in combat.
+- Promotion lines read as the overlord's own ranks (not yet in code).
+- A unit killed by Holy damage leaves no corpse.
+- Several corpses can share a tile; one burn destroys the pile.
+- Dismiss: a free action, once per phase.
+- Consecration lasts until the cleric who cast it dies; two areas per cleric.
+- The outer display scrolls rather than shrinking the map (not yet in code).
+- Slice line-up as in GDD 13.12.
+
+**Status:** awaiting Adam's confirmation or changes.
+
+## 2026-11-25: Rules module structure
+
+- The rules live in a Swift package, `NecroRules`, importing only Foundation.
+- The unit type is named `BattleUnit`, because Foundation already defines a
+  type called `Unit` and the clash breaks any file that imports both.
+- Battle state is one `Codable` value (`GameState`); encoding it is the save
+  file. Saves work mid-phase, including a half-finished move.
+- Units, the type chart, rule constants and maps are JSON resources inside the
+  package.
+- Tests use Swift Testing, which ships with the toolchain on Linux and macOS.
+- The cloud environment also allows `download.swift.org`, to install Swift.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |
 |---|---|---|---|
 | GATE 1: engine, build pipeline, feature feasibility | Approved | 2026-11-25 | Native Swift: SwiftUI + SpriteKit, rules in a pure Swift package |
-| GATE 2: GDD review, items in brief 3.5 | Presented 2026-11-25, awaiting Adam | | |
+| GATE 2: GDD review, items in brief 3.5 | Brief items resolved; design defaults provisional | 2026-11-25 | Hybrid campaign, App Store release, AI-generated sprites, title to be workshopped |
 | GATE 3: vertical slice played on device | Not reached | | |

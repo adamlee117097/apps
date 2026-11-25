@@ -1,0 +1,38 @@
+{
+  "id": "slice01",
+  "name": "The Old Road",
+  "commandCap": 5,
+  "legend": { ".": "open", "f": "rough", "#": "wall", "~": "water" },
+  "rows": [
+    "................",
+    "..ff.......##...",
+    "..f.........#...",
+    "................",
+    ".....ff.........",
+    "......f...~~....",
+    "..........~~....",
+    ".....f..........",
+    "....ff......#...",
+    "...........##...",
+    "..f.............",
+    "................"
+  ],
+  "units": [
+    { "unit": "overlord",    "side": "player", "x": 1,  "y": 5 },
+    { "unit": "skeleton",    "side": "player", "x": 3,  "y": 4 },
+    { "unit": "skeleton",    "side": "player", "x": 3,  "y": 7 },
+    { "unit": "bone_archer", "side": "player", "x": 2,  "y": 6 },
+    { "unit": "ghoul",       "side": "player", "x": 3,  "y": 5 },
+    { "unit": "militia",     "side": "enemy",  "x": 11, "y": 4 },
+    { "unit": "militia",     "side": "enemy",  "x": 12, "y": 6 },
+    { "unit": "militia",     "side": "enemy",  "x": 12, "y": 7 },
+    { "unit": "archer",      "side": "enemy",  "x": 13, "y": 4 },
+    { "unit": "knight",      "side": "enemy",  "x": 12, "y": 5 },
+    { "unit": "cleric",      "side": "enemy",  "x": 14, "y": 6 },
+    { "unit": "pyromancer",  "side": "enemy",  "x": 14, "y": 5 }
+  ],
+  "corpses": [
+    { "unit": "militia", "x": 6, "y": 3 },
+    { "unit": "reaver",  "x": 7, "y": 8 }
+  ]
+}

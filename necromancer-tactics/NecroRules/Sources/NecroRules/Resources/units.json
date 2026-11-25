@@ -1,0 +1,26 @@
+{
+  "units": [
+    { "id": "overlord", "name": "Overlord", "type": "sovereign", "maxHP": 24, "might": 10, "guard": 3, "ward": 4, "move": 4, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["raise"], "raiseRange": 2, "isOverlord": true },
+    { "id": "gravespeaker", "name": "Gravespeaker", "type": "sovereign", "maxHP": 14, "might": 7, "guard": 2, "ward": 4, "move": 4, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["raise"], "raiseRange": 1 },
+
+    { "id": "skeleton", "name": "Skeleton", "type": "bone", "maxHP": 18, "might": 10, "guard": 4, "ward": 1, "move": 4, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [] },
+    { "id": "bone_archer", "name": "Bone Archer", "type": "bone", "maxHP": 14, "might": 9, "guard": 2, "ward": 1, "move": 4, "minRange": 2, "maxRange": 2, "damage": "physical", "skills": [] },
+    { "id": "dread_knight", "name": "Dread Knight", "type": "bone", "maxHP": 26, "might": 12, "guard": 7, "ward": 2, "move": 3, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": ["bulwark"] },
+    { "id": "ghoul", "name": "Ghoul", "type": "flesh", "maxHP": 22, "might": 11, "guard": 2, "ward": 2, "move": 5, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": ["feed"] },
+    { "id": "carrion_hound", "name": "Carrion Hound", "type": "flesh", "maxHP": 14, "might": 9, "guard": 1, "ward": 1, "move": 6, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [] },
+    { "id": "oathbreaker", "name": "Oathbreaker", "type": "flesh", "maxHP": 28, "might": 13, "guard": 6, "ward": 5, "move": 4, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": ["defile"] },
+    { "id": "shade", "name": "Shade", "type": "spirit", "maxHP": 12, "might": 9, "guard": 5, "ward": 3, "move": 5, "minRange": 1, "maxRange": 1, "damage": "magic", "skills": ["drift"] },
+    { "id": "ash_wraith", "name": "Ash Wraith", "type": "spirit", "maxHP": 14, "might": 11, "guard": 2, "ward": 5, "move": 4, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": [] },
+    { "id": "hollow_priest", "name": "Hollow Priest", "type": "spirit", "maxHP": 16, "might": 8, "guard": 2, "ward": 6, "move": 4, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["mend"] },
+
+    { "id": "militia", "name": "Militia", "type": "steel", "maxHP": 16, "might": 9, "guard": 3, "ward": 1, "move": 4, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [], "raisesAs": "skeleton" },
+    { "id": "archer", "name": "Archer", "type": "steel", "maxHP": 13, "might": 9, "guard": 2, "ward": 1, "move": 4, "minRange": 2, "maxRange": 2, "damage": "physical", "skills": [], "raisesAs": "bone_archer" },
+    { "id": "knight", "name": "Knight", "type": "steel", "maxHP": 24, "might": 11, "guard": 7, "ward": 2, "move": 3, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [], "raisesAs": "dread_knight" },
+    { "id": "reaver", "name": "Reaver", "type": "steel", "maxHP": 20, "might": 11, "guard": 2, "ward": 1, "move": 5, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [], "raisesAs": "ghoul" },
+    { "id": "warhound", "name": "Warhound", "type": "steel", "maxHP": 12, "might": 8, "guard": 1, "ward": 1, "move": 6, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [], "raisesAs": "carrion_hound" },
+    { "id": "scout", "name": "Scout", "type": "steel", "maxHP": 12, "might": 8, "guard": 2, "ward": 2, "move": 5, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [], "raisesAs": "shade" },
+    { "id": "pyromancer", "name": "Pyromancer", "type": "flame", "maxHP": 13, "might": 11, "guard": 1, "ward": 4, "move": 4, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["burnCorpses"], "raisesAs": "ash_wraith" },
+    { "id": "cleric", "name": "Cleric", "type": "holy", "maxHP": 14, "might": 8, "guard": 1, "ward": 6, "move": 4, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["consecrate", "heal"], "raisesAs": "hollow_priest" },
+    { "id": "paladin", "name": "Paladin", "type": "holy", "maxHP": 24, "might": 11, "guard": 6, "ward": 5, "move": 4, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": ["purgeCorpses"], "raisesAs": "oathbreaker" }
+  ]
+}

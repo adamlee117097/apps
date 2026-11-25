@@ -1,0 +1,44 @@
+name: Necromancer Tactics rules tests
+
+on:
+  push:
+    paths:
+      - "necromancer-tactics/**"
+      - ".github/workflows/necromancer-tactics.yml"
+  pull_request:
+    paths:
+      - "necromancer-tactics/**"
+      - ".github/workflows/necromancer-tactics.yml"
+
+permissions:
+  contents: read
+
+env:
+  SWIFT_VERSION: "6.4.3"
+
+jobs:
+  test:
+    name: swift test (Linux)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Swift toolchain
+        id: cache-swift
+        uses: actions/cache@v4
+        with:
+          path: ~/swift
+          key: swift-${{ env.SWIFT_VERSION }}-ubuntu24.04
+
+      - name: Install Swift toolchain
+        if: steps.cache-swift.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/swift
+          curl -fsSL "https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu2404/swift-${SWIFT_VERSION}-RELEASE/swift-${SWIFT_VERSION}-RELEASE-ubuntu24.04.tar.gz" \
+            | tar xz --strip-components=1 -C ~/swift
+
+      - name: Run tests
+        working-directory: necromancer-tactics/NecroRules
+        run: |
+          ~/swift/usr/bin/swift --version
+          ~/swift/usr/bin/swift test

@@ -12,11 +12,32 @@ the bodies on the field. Original world, characters and lore.
 | `docs/DECISIONS.md` | Log of gate decisions with dates and reasons. |
 | `docs/RESEARCH.md` | Phase 0 research with sources. |
 | `docs/GDD.md` | Game design document. |
+| `NecroRules/` | Swift package with the game rules and their tests. |
 
 ## Running the tests
 
-There is no code yet. Game code starts only after GATE 2 (design review) is
-resolved. It will be a Swift package tested with `swift test`. This section will be filled in when the rules module exists.
+The game rules are a Swift package with no Apple-only dependencies, so the tests
+run on Linux and macOS alike. Swift 6.4 or later is needed (Xcode 27 includes
+it; on Linux, install from <https://www.swift.org/install/linux/>).
+
+```sh
+cd necromancer-tactics/NecroRules
+swift test
+```
+
+GitHub Actions runs the same command on every push that touches
+`necromancer-tactics/` (workflow: `.github/workflows/necromancer-tactics.yml`).
+
+## Layout
+
+| Path | Contents |
+|---|---|
+| `NecroRules/Sources/NecroRules/` | The rules: model, data loading, engine, enemy AI. No rendering or UI code. |
+| `NecroRules/Sources/NecroRules/Resources/` | Data files: `units.json`, `rules.json`, `maps/`. Balance changes go here, not in code. |
+| `NecroRules/Tests/NecroRulesTests/` | Unit tests. |
+
+The Xcode project for the app will be added beside `NecroRules/` and will
+depend on it as a local package, so nothing here needs to move.
 
 ## Repository note
 

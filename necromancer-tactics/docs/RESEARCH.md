@@ -320,7 +320,161 @@ and
 
 ## 5. Engine and framework options (brief 2.2)
 
-In progress.
+### 5.1 The fact that decides most of this
+
+The iPhone Duo APIs (hinge, reserved regions, arrangement views) exist only in
+UIKit and SwiftUI (section 3). A native Swift app calls them directly. Neither
+Godot's nor Unity's documentation, changelog or release notes mention iPhone
+Duo, the hinge or reserved regions as of the research date, so in those engines
+each one would need a native plugin written and built on the Mac.
+
+### 5.2 SpriteKit (Apple native 2D)
+
+- **Not deprecated.** The framework page lists iOS 7.0+ with no deprecation
+  marker: "Add high-performance 2D content with smooth animations to your app,
+  or create a game with a high-level set of 2D game-based tools."
+  <https://developer.apple.com/documentation/spritekit>
+- **Not actively developed either.** There is no SpriteKit page among Apple's
+  framework update lists (<https://developer.apple.com/documentation/updates>),
+  and the string "SpriteKit" does not appear in the iOS 26 to 27.3 beta release
+  notes, the Xcode 26 and 27 release notes, or any of the 260 WWDC25 and WWDC26
+  session pages (searched by a research sub-agent; the absence was not
+  re-checked by hand).
+- **Precedent to weigh:** Apple deprecated its 3D sibling in 2025. "SceneKit is
+  now deprecated across all Apple platforms. Developers can continue to use
+  SceneKit in their projects, but no new features or optimizations are coming to
+  this framework."
+  <https://developer.apple.com/documentation/xcode-release-notes/xcode-26-release-notes>
+  Apple has said nothing like this about SpriteKit and has announced no 2D
+  replacement.
+- Frame rate: `SKView.preferredFramesPerSecond`, default 60. "The actual frame
+  rate chosen is usually a factor of the maximum refresh rate of the screen".
+  <https://developer.apple.com/documentation/spritekit/skview/preferredframespersecond>
+  Lowering it on menus and during enemy turns is a one-line change. Reaching
+  120 on an iPhone needs the Info.plist key in section 4. That SpriteKit
+  actually reaches 120 fps on iPhone Duo is **unverified**; it needs a device
+  test.
+- Tile maps: `SKTileMapNode` exists, with a limit: "A tile map does not expose
+  its tiles as nodes, and therefore you cannot assign individual tiles with a
+  different zPosition or physicsBody."
+  <https://developer.apple.com/documentation/spritekit/sktilemapnode>.
+  Overlays such as range highlights and consecrated ground would be separate
+  nodes on top.
+- Pencil, haptics, controllers, Game Center: all first-party frameworks, called
+  directly.
+- Off-Mac development: none of the rendering. SpriteKit is Apple-platform only.
+
+### 5.3 Metal directly
+
+- Apple positions Metal as the low-level choice: "Its low-overhead model gives
+  you direct control over what tasks the GPU performs".
+  <https://developer.apple.com/games/pathway/>. No Apple guidance recommending
+  raw Metal for a 2D sprite game was found.
+- Sprite batching, atlases, tile maps, animation and text would all have to be
+  written by hand. For a turn-based game with a few dozen sprites there is no
+  performance need.
+- Apple documents a middle path if SpriteKit ever falls short: "When you want to
+  mix SpriteKit content with your own Metal content, use SKRenderer".
+  <https://developer.apple.com/documentation/spritekit/choosing-a-spritekit-scene-renderer>
+
+### 5.4 SwiftUI + SpriteKit hybrid
+
+- `SpriteView` is "A SwiftUI view that renders a SpriteKit scene", iOS 14.0+,
+  not deprecated. Its fullest initialiser takes `preferredFramesPerSecond`,
+  `isPaused` and a `shouldRender` callback.
+  <https://developer.apple.com/documentation/spritekit/spriteview>
+- Apple documents no limits for `SpriteView`; its pages have almost no
+  discussion text. Touch routing (including Pencil touch type) and 120 Hz
+  through `SpriteView` are **unverified**. The fallback is wrapping `SKView`
+  with `UIViewRepresentable`, which gives full UIKit touch access.
+- The benefit: menus, HUD and unit panels in SwiftUI get the iPhone Duo
+  behaviour for free. `ArrangementView` gives the map/panel split and the
+  tabletop layout; `onHingeChange` gives the hinge.
+
+### 5.5 Godot 4.x
+
+- Current stable is 4.7.2 (August 2026) per <https://godotengine.org/download/linux/>
+  (version read by the sub-agent). MIT licensed.
+- iOS export: "You must export for iOS from a computer running macOS with Xcode
+  installed."
+  <https://docs.godotengine.org/en/stable/tutorials/export/exporting_for_ios.html>
+- **Foldable risk.** Godot's iOS export template hard-codes
+  `UIRequiresFullScreen` = true and `UIApplicationSupportsMultipleScenes` =
+  false.
+  <https://raw.githubusercontent.com/godotengine/godot/4.7.2-stable/misc/dist/apple_embedded_xcode/godot_apple_embedded/godot_apple_embedded-Info.plist>
+  (checked directly). Godot's view does resize its window on layout, and the
+  engine emits `size_changed`, so fold and unfold may work, but nothing in
+  Godot's docs covers iPhone Duo. **Unverified** end to end.
+- Whether Godot 4.7.2 builds against the iOS 27 SDK with Xcode 27 is
+  **unverified**; its changelog mentions only Xcode 26.
+- 120 Hz: supported by a project setting, and the template already sets the
+  Info.plist key.
+- Haptics: only `Input.vibrate_handheld(duration, amplitude)`. Distinct patterns
+  for raise, holy damage and burning (hardware feature 5) need a native plugin.
+- Pencil: pressure and tilt reach drag events. Telling Pencil from finger is
+  **unverified**.
+- Controllers: supported on iOS.
+- Off-Mac development: the best of all options. The whole game, including
+  rendering, runs on Linux. Only export, plugins and device behaviour need the
+  Mac. Godot has no official unit-test framework; third-party ones exist.
+- Language is GDScript (or C#), so the rules module would not be Swift.
+
+### 5.6 Unity
+
+- Licence: Unity Personal is free up to $200,000: "Unity Pro is required if you
+  have over $200,000 in total annual revenue and funding." The runtime fee is
+  cancelled, and the splash screen is optional in Unity 6.
+  <https://unity.com/products/pricing-updates>
+- iOS builds: "Unity generates an Xcode project and then Xcode builds this
+  project into the final application".
+  <https://docs.unity3d.com/6000.4/Documentation/Manual/ios-environment-setup.html>
+- **iOS 27 and iPhone Duo support is unverified.** The release notes read for
+  the current LTS and latest releases mention neither. Unity's 6.3 LTS manual
+  was not reachable from this session.
+- 2D tooling (Tilemap, Sprite Atlas) is mature. Pencil arrives as
+  `TouchType.Stylus`. 120 Hz is a Player setting plus `targetFrameRate`.
+- Core Haptics, Game Controller and GameKit come through Apple's own Unity
+  plug-ins, which must be built separately.
+  <https://raw.githubusercontent.com/apple/unityplugins/main/README.md>
+- Off-Mac development: the editor runs on Ubuntu and tests run from the command
+  line, but it is a heavy install and the project format is hard for an AI
+  agent to edit outside the editor (inference).
+
+### 5.7 Newer Apple game technology
+
+- **Games app and Game Center** (WWDC25): "Your games will automatically display
+  on the Games app". Challenges and activities are configured in Xcode: "Use a
+  GameKit Configuration file in Xcode to configure Game Activities and
+  Challenges." <https://developer.apple.com/games/>,
+  <https://developer.apple.com/documentation/updates/gamekit>. Relevant later;
+  not for the slice.
+- **Touch Controller framework** (iOS 26): on-screen virtual pads for Metal
+  games. Not relevant to a tap-driven tactics game.
+- Metal 4, Game Porting Toolkit 4, Reality Composer Pro: 3D or porting tools.
+  Not relevant.
+- No new 2D framework was announced in 2025 or 2026.
+
+### 5.8 Comparison
+
+| | SwiftUI + SpriteKit | Raw Metal | Godot 4.7 | Unity 6 |
+|---|---|---|---|---|
+| Fold, hinge, tabletop layout | Direct first-party API | Direct (UIKit around a Metal view) | Native plugin needed; template forces full screen; unverified | Native plugin needed; unverified |
+| Apple Pencil | Direct | Direct | Partial; Pencil vs finger unverified | Yes |
+| 120 Hz and lowering it | Yes; 120 on device unverified | Yes | Yes | Yes |
+| Distinct haptics | Core Haptics directly | Core Haptics directly | Plugin needed | Apple plug-in |
+| Controllers | Direct | Direct | Built in | Built in or Apple plug-in |
+| Rules module testable on Linux | Yes, as a pure Swift package (`swift test`) | Same | Yes, GDScript headless | Yes, heavy |
+| Rendering developable on Linux | No | No | Yes | Yes |
+| Rendering code to write | Low | High | Low | Low |
+| iOS 27 / Xcode 27 support | Certain | Certain | Unverified | Unverified |
+| Main risk | SpriteKit is in maintenance; could be deprecated one day | Large amount of work | Foldable support does not exist yet | Foldable support unverified; heavy tooling |
+| Cost | Free | Free | Free (MIT) | Free under $200k |
+
+Swift on Linux, for the rules module: Swift publishes Linux toolchains
+(<https://www.swift.org/install/linux/>) and "Swift Testing is included in
+officially-supported Swift toolchains, including those for Apple platforms,
+Linux, and Windows."
+<https://raw.githubusercontent.com/swiftlang/swift-testing/main/README.md>
 
 ## 6. 2D sprite pipeline (brief 2.4)
 
@@ -492,4 +646,87 @@ touch grid controls. Final Fantasy Tactics uses an isometric map with height.
 
 ## 8. Recommendation and GATE 1
 
-In progress.
+### 8.1 Engine: native Swift, with SwiftUI around a SpriteKit map
+
+- **Rules:** a Swift package with no Apple-framework imports beyond Foundation.
+  Grid, units, combat, raise, command cap, turn order, AI, save and load. Unit
+  tested with `swift test` on Linux and in GitHub Actions.
+- **Map and sprites:** SpriteKit.
+- **Menus, HUD, unit panels, layout across fold states:** SwiftUI, using
+  `ArrangementView` and reserved regions.
+
+Reasons:
+
+1. iPhone Duo is the point of the project, and the fold APIs are first-party
+   only. Every other engine puts a plugin between the game and the features the
+   brief lists first.
+2. It is the only option where iOS 27 and Xcode 27 support is certain.
+3. The rules module is plain Swift, so the work done on Linux moves to the Mac
+   unchanged, as the brief requires.
+4. Pencil, Core Haptics, Game Controller and GameKit need no bridging.
+5. Swift source and a text-based Xcode project format (new in Xcode 27) are
+   straightforward for Claude Code to edit and build from the command line.
+
+What it costs:
+
+- No rendering work can happen until the Mac is available. On Linux the game
+  can only be exercised through tests, and optionally a text-mode battle runner.
+- SpriteKit is not being developed. If Apple deprecates it, it would keep
+  working for years (as SceneKit does), and because rules are separate from
+  rendering, only the map renderer would need replacing. Apple's documented
+  path would be `SKRenderer` or Metal.
+
+Runner-up: Godot, if developing the visuals on Linux mattered more than fold
+support. It is not recommended, because its iPhone Duo support is unproven.
+
+### 8.2 Build pipeline
+
+- Mac mini on macOS Tahoe 26.6 or later, with Xcode 27.2.
+- iPhone Duo on iOS 27.2 or later (needed for Pencil).
+- A free Apple Account is enough through GATE 3, with 7-day reinstall. The paid
+  program ($99 per year) is needed for TestFlight, the App Store, and possibly
+  Game Center.
+- GitHub Actions on Linux runs the rules tests on every push.
+
+### 8.3 Hardware features
+
+| Feature | Verdict |
+|---|---|
+| 1. Two screens, seamless | Feasible. Confirm in the simulator first |
+| 2. Apple Pencil | Feasible for taps and drawn paths. No pressure, no hover. Needs iOS 27.2 |
+| 3. Tabletop layout | Feasible with first-party API |
+| 4. 120 Hz with idle throttling | Feasible. 120 on device to be confirmed |
+| 5. Core Haptics | Feasible |
+| 6. Controllers | Feasible |
+| 7. Game Center / Games app | Feasible later. Account requirement unverified |
+| 8. Core ML | Not recommended now |
+| Extra: hinge as input | Available. Apple names games as a use. A possible flourish, for example closing the phone part-way as a gesture. Optional |
+
+### 8.4 Open risks
+
+1. **Fold transition and SpriteKit.** No Apple page describes how a fold or
+   unfold reaches an `SKView`. First task on the Mac: a one-screen prototype in
+   the iPhone Duo simulator that folds and unfolds with a scene on screen.
+2. **Inner display resolution discrepancy** (6.1) and unknown scale factors.
+   Measure in the simulator before any art decisions.
+3. **12 × 16 map on the outer display** may put tiles under the 44 pt minimum
+   (7.3). Decide at GATE 2.
+4. **SpriteKit's future** (5.2).
+5. **`SpriteView` touch handling** for Pencil is undocumented; may need the
+   `UIViewRepresentable` fallback.
+6. **Simulator limits.** Haptics, real 120 Hz, Pencil and hinge feel can only be
+   judged on the device.
+7. **Mac mini compatibility** with macOS 26.6 is unknown until checked.
+8. **Reference-game findings are weakly sourced** (section 7).
+
+### 8.5 Questions for Adam
+
+1. Do you approve native Swift (SwiftUI + SpriteKit) as the engine?
+2. Which Apple Developer account do you have: none, free Apple Account, or the
+   paid program?
+3. Repository: keep the game in `necromancer-tactics/` inside
+   `adamlee117097/apps`, or move to a dedicated repository?
+4. Which Mac mini model and macOS version do you have, if you know offhand?
+5. Do you own an Apple Pencil (USB-C), and is the phone on iOS 27.2 or later?
+6. Should I firm up the reference-game research by allowing the publisher
+   sites, or is the current level enough for the GDD?

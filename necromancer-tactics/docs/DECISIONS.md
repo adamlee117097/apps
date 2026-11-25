@@ -26,6 +26,6 @@ Each entry: date, decision, reason. Newest at the bottom.
 
 | Gate | Status | Date | Outcome |
 |---|---|---|---|
-| GATE 1: engine, build pipeline, feature feasibility | Not reached | | |
+| GATE 1: engine, build pipeline, feature feasibility | Presented 2026-11-25, awaiting Adam | | Recommendation: native Swift, SwiftUI + SpriteKit |
 | GATE 2: GDD review, items in brief 3.5 | Not reached | | |
 | GATE 3: vertical slice played on device | Not reached | | |

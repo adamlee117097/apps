@@ -20,7 +20,7 @@ Each entry: date, decision, reason. Newest at the bottom.
   `necromancer-tactics` that allows `www.apple.com`, `support.apple.com`,
   `docs.godotengine.org`, `godotengine.org`, `docs.unity3d.com`, `unity.com`.
 - **Reason:** The default environment blocked these hosts, and the brief
-  requires primary sources. Approved by Adam in the session prompt.
+  requires primary sources. Adam approved it on the approval prompt.
 
 ## Gates
 

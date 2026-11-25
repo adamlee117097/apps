@@ -65,7 +65,7 @@ import Testing
     func playerDamageMatchesTheDesignDocument(attacker: String, defender: String, expected: Int) throws {
         let f = try Fixture(units: [P(unit: attacker, side: .player, x: 1, y: 1), P(unit: defender, side: .enemy, x: 2, y: 1)])
         let forecast = f.engine.forecast(attacker: f.unit(attacker), defender: f.unit(defender, .enemy), in: f.state)
-        #expect(forecast.damage == expected)
+        #expect(forecast.strike.damage == expected)
     }
 
     @Test(arguments: [
@@ -78,13 +78,13 @@ import Testing
     func enemyDamageMatchesTheDesignDocument(attacker: String, defender: String, expected: Int) throws {
         let f = try Fixture(units: [P(unit: defender, side: .player, x: 1, y: 1), P(unit: attacker, side: .enemy, x: 2, y: 1)])
         let forecast = f.engine.forecast(attacker: f.unit(attacker, .enemy), defender: f.unit(defender), in: f.state)
-        #expect(forecast.damage == expected)
+        #expect(forecast.strike.damage == expected)
     }
 
     @Test func attackAppliesForecastAndCounter() throws {
         var f = try Fixture(units: [P(unit: "skeleton", side: .player, x: 1, y: 1), P(unit: "militia", side: .enemy, x: 2, y: 1)])
         let forecast = f.engine.forecast(attacker: f.unit("skeleton"), defender: f.unit("militia", .enemy), in: f.state)
-        #expect(forecast.counterDamage == 7)
+        #expect(forecast.counter?.damage == 7)
         try f.apply(.attack(unit: f.id("skeleton"), target: f.id("militia", .enemy)))
         #expect(f.unit("militia", .enemy).hp == 16 - 5)
         #expect(f.unit("skeleton").hp == 18 - 7)
@@ -107,10 +107,10 @@ import Testing
     @Test func damageIsAtLeastOne() throws {
         let f = try Fixture(units: [P(unit: "carrion_hound", side: .player, x: 1, y: 1), P(unit: "knight", side: .enemy, x: 2, y: 1)])
         // Might 9 against Guard 7 is 2; any result below 1 is raised to 1.
-        #expect(f.engine.forecast(attacker: f.unit("carrion_hound"), defender: f.unit("knight", .enemy), in: f.state).damage == 2)
+        #expect(f.engine.forecast(attacker: f.unit("carrion_hound"), defender: f.unit("knight", .enemy), in: f.state).strike.damage == 2)
         let g = try Fixture(units: [P(unit: "warhound", side: .enemy, x: 2, y: 1), P(unit: "dread_knight", side: .player, x: 1, y: 1)])
         // Might 8 against Guard 7 is 1, times 1.5 for Steel against Bone, rounded down, is 1.
-        #expect(g.engine.forecast(attacker: g.unit("warhound", .enemy), defender: g.unit("dread_knight"), in: g.state).damage == 1)
+        #expect(g.engine.forecast(attacker: g.unit("warhound", .enemy), defender: g.unit("dread_knight"), in: g.state).strike.damage == 1)
     }
 
     @Test func roughGroundAndBulwarkAddGuard() throws {

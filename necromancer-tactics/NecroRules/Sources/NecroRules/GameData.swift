@@ -10,6 +10,10 @@ public struct UnitDefinition: Codable, Equatable, Sendable {
     public var `guard`: Int
     public var ward: Int
     public var move: Int
+    /// Base accuracy, avoidance and critical chance, in percent.
+    public var hit: Int
+    public var avoid: Int
+    public var crit: Int
     public var minRange: Int
     public var maxRange: Int
     public var damage: DamageKind
@@ -35,6 +39,11 @@ public struct Ruleset: Codable, Equatable, Sendable {
     public var advantage: Fraction
     public var disadvantage: Fraction
     public var typeChart: [String: [String: Matchup]]
+    /// Damage multiplier for a critical hit.
+    public var critical: Fraction
+    /// Added to hit chance with type advantage, subtracted with disadvantage.
+    public var matchupHitBonus: Int
+    public var roughAvoidBonus: Int
     public var roughMoveCost: Int
     public var roughGuardBonus: Int
     public var bulwarkGuardBonus: Int
@@ -140,7 +149,8 @@ public struct GameData: Sendable {
 
 extension GameState {
     /// Builds the opening state of a battle from a map.
-    public init(map: MapDefinition, data: GameData) throws {
+    /// `seed` starts the battle's random sequence. The same seed and the same actions always give the same battle.
+    public init(map: MapDefinition, data: GameData, seed: UInt64 = 1) throws {
         guard let width = map.rows.first?.count, width > 0,
               map.rows.allSatisfy({ $0.count == width }) else {
             throw DataError.badMap("rows must be non-empty and the same length")
@@ -157,7 +167,7 @@ extension GameState {
         self.init(mapID: map.id, width: width, height: map.rows.count, terrain: cells,
                   units: [], corpses: [], consecrations: [], phase: .player, turn: 1,
                   commandCap: map.commandCap, outcome: .ongoing, dismissUsedThisPhase: false,
-                  nextUnitID: 1, nextCorpseID: 1, nextSequence: 1)
+                  nextUnitID: 1, nextCorpseID: 1, nextSequence: 1, rngState: seed)
         for p in map.units {
             let def = try data.definition(p.unit)
             let pos = Position(p.x, p.y)

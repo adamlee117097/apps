@@ -54,20 +54,24 @@ public struct EnemyAI: Sendable {
             for foe in foes where engine.inRange(def, from: tile, to: foe.position) {
                 let f = engine.forecast(attacker: unit, defender: foe, from: tile, in: state)
                 let foeDef = engine.definition(of: foe)
-                var score = f.damage * 10
-                if f.matchup == .advantage { score += 10 }
-                if f.kills {
-                    score += 60
-                    if foeDef.overlord { score += 100_000 }
+                // Scores are expected values: what a hit is worth, times the chance of landing it.
+                var onHit = f.strike.damage * 10
+                if f.strike.kills {
+                    onHit += 60
+                    if foeDef.overlord { onHit += 100_000 }
                     // A Holy kill leaves nothing to raise.
-                    if def.type == .holy { score += 40 }
+                    if def.type == .holy { onHit += 40 }
                 } else if foeDef.overlord {
-                    score += 30
+                    onHit += 30
                 }
-                if foeDef.has(.raise) { score += 20 }
-                if let back = f.counterDamage {
-                    score -= back * 6
-                    if f.counterKills { score -= 80 }
+                if foeDef.has(.raise) { onHit += 20 }
+                var score = onHit * f.strike.hitChance / 100
+                if let back = f.counter, !f.strike.kills || f.strike.hitChance < 100 {
+                    var onCounter = back.damage * 6
+                    if back.kills { onCounter += 80 }
+                    // The counter only comes if the target survives.
+                    let survives = f.strike.kills ? 100 - f.strike.hitChance : 100
+                    score -= onCounter * back.hitChance / 100 * survives / 100
                 }
                 consider(tile, .attack(unit: unit.id, target: foe.id), score)
             }

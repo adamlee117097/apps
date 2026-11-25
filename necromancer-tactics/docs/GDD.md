@@ -29,8 +29,9 @@ is over control of the bodies.
    (agreed; not to be reintroduced).
 3. **The enemy fights the necromancy, not just the army.** Consecration, burning
    and holy damage are the threats.
-4. **Everything is readable.** No hidden rolls. The player can always see what
-   an action will do and what the enemy can reach.
+4. **Everything is readable.** The forecast shows the exact damage and the true
+   chance to hit. The player can always see what an action can do and what the
+   enemy can reach.
 5. **Playable in two minutes or twenty.** Folded for a quick turn, open for the
    full view, with nothing lost between them.
 
@@ -48,23 +49,37 @@ is over control of the bodies.
 - **Undo (proposed):** a move can be undone freely until the unit acts. Attacks,
   raises and skills ask for confirmation and cannot be undone.
 
-### 3.2 Combat (proposed)
-
-Combat has **no randomness**. The forecast shown before an attack is exactly
-what happens.
+### 3.2 Combat (decided 2026-11-25: hit chances, in the Fire Emblem tradition)
 
 - Each unit has: HP, Might, Guard, Ward, Move, Range, a damage kind (physical or
-  magic) and a type (section 4).
-- Damage = (attacker's Might − defender's Guard for physical, or Ward for magic)
-  × type multiplier, rounded down, minimum 1.
-- **Counterattack:** if the defender survives and the attacker is within the
-  defender's Range, the defender strikes back once, using the same formula.
-- No double attacks, critical hits or misses.
+  magic), a type (section 4), and three accuracy numbers: Hit, Avoid and Crit.
+- **Damage on a hit** = (attacker's Might − defender's Guard for physical, or
+  Ward for magic) × type multiplier, rounded down, minimum 1.
+- **Chance to hit** = attacker's Hit − defender's Avoid, +15 with type
+  advantage, −15 with disadvantage, −10 if the defender stands on rough ground.
+  Kept between 0 and 100.
+- **Critical hits:** a hit has the attacker's Crit chance of dealing double
+  damage.
+- **Counterattack:** if the defender is still standing and the attacker is
+  within the defender's Range, the defender strikes back once, with its own
+  chance to hit and to crit.
+- No double attacks.
 
-Why no randomness: the rules module must be deterministic (brief), mis-taps on a
-touchscreen are punishing enough without bad rolls, and a game about planning
-around corpses is clearer when outcomes are certain. This is open for
-discussion (13.5).
+Fairness rules:
+
+- **The number shown is the real chance.** One roll decides a hit; nothing is
+  adjusted behind the scenes.
+- **Rolls come from a seeded sequence that is saved with the battle.** The same
+  battle with the same actions always plays out the same way, which keeps the
+  rules testable. A consequence for players: reloading a save and repeating the
+  same action gives the same result. Doing something else first changes later
+  rolls.
+- The forecast shows damage, chance to hit, chance to crit, whether a hit would
+  kill, and the same for the enemy's reply.
+
+Critical hits were added along with hit chances because both were offered
+together in the question Adam answered. If only misses were wanted, setting
+every unit's Crit to 0 in `units.json` removes them.
 
 ### 3.3 Corpses (agreed core, proposed details)
 
@@ -227,13 +242,37 @@ Notes:
   consecrated ground. Killing them without Holy or fire getting to the body
   first is the reward.
 
-### 5.3 Checking the numbers
+### 5.3 Accuracy
+
+Hit, Avoid and Crit are percentages.
+
+| Unit | Hit | Avoid | Crit | | Unit | Hit | Avoid | Crit |
+|---|---|---|---|---|---|---|---|---|
+| Overlord | 90 | 10 | 0 | | Militia | 80 | 5 | 0 |
+| Gravespeaker | 85 | 10 | 0 | | Archer | 85 | 5 | 0 |
+| Skeleton | 85 | 5 | 0 | | Knight | 80 | 0 | 5 |
+| Bone Archer | 90 | 5 | 5 | | Reaver | 80 | 10 | 10 |
+| Dread Knight | 80 | 0 | 5 | | Warhound | 85 | 20 | 0 |
+| Ghoul | 80 | 10 | 5 | | Scout | 85 | 25 | 5 |
+| Carrion Hound | 85 | 20 | 0 | | Pyromancer | 85 | 10 | 0 |
+| Oathbreaker | 85 | 5 | 5 | | Cleric | 90 | 10 | 0 |
+| Shade | 90 | 25 | 5 | | Paladin | 85 | 5 | 5 |
+| Ash Wraith | 85 | 10 | 0 | | | | | |
+| Hollow Priest | 90 | 10 | 0 | | | | | |
+
+Typical chances: 75 to 85 percent in an even matchup, about 95 with type
+advantage, about 65 with disadvantage. Fast, light units (Shade, Scout, hounds)
+are the hard ones to hit.
+
+### 5.4 Checking the numbers
+
+Damage below is on a hit.
 
 | Attack | Calculation | Result |
 |---|---|---|
-| Skeleton → Militia | (10 − 3) × 0.75 | 5 of 16 HP. Four hits |
+| Skeleton → Militia | (10 − 3) × 0.75 | 5 of 16 HP. Four hits. 65% to hit |
 | Militia → Skeleton | (9 − 4) × 1.5 | 7 of 18 HP. Three hits |
-| Ghoul → Cleric | (11 − 1) × 1.5 | 15 of 14 HP. One hit |
+| Ghoul → Cleric | (11 − 1) × 1.5 | 15 of 14 HP. One hit. 85% to hit |
 | Shade → Knight | (9 − 2) × 1.5 | 10 of 24 HP. Three hits |
 | Knight → Shade | (11 − 5) × 0.75 | 4 of 12 HP. Three hits |
 | Pyromancer → Ghoul | (11 − 2) × 1.5 | 13 of 22 HP. Two hits |
@@ -319,7 +358,9 @@ strongest units in the game (agreed).
 
 ## 10. Enemy AI (proposed, for the slice)
 
-The AI is deterministic and scores each possible action. Priorities, highest
+The AI scores each possible action by its expected value: what a hit is worth
+times its chance to land. Given the same battle state it always chooses the
+same action. Priorities, highest
 first:
 
 1. Kill the overlord if it can be done this phase.
@@ -521,41 +562,21 @@ assumption.
   for a raise, a single sharp crack for holy damage, a fading rumble for a
   burned pile.
 
-## 13. Open items for GATE 2
+## 13. GATE 2 outcomes
 
-Update 2026-11-25: items 1 to 4 are decided (hybrid; App Store release;
-sprites from Google's image generation; title to be workshopped). Items 5 to
-12 are in use as provisional defaults and await Adam's confirmation. See
-`DECISIONS.md`.
+All resolved on 2026-11-25. Details and Adam's words are in `DECISIONS.md`.
 
-From the brief:
-
-1. **Campaign structure:** linear, roguelite, or hybrid. Recommendation:
-   hybrid, built linear first (section 11).
-2. **Personal project or App Store release.** The engine choice (native Swift)
-   works for both. A release needs the paid developer program, original or
-   properly licensed art, and App Store screenshots.
-3. **Art direction** and who makes it. RESEARCH.md 6.2 explains why strict
-   pixel art is harder on this device. Recommendation: decide after the display
-   scale is measured on the Mac; the slice uses placeholder shapes.
-4. **Final title, and a default overlord name.**
-
-From this draft:
-
-5. **No randomness in combat** (3.2). Agree, or prefer hit chances and
-   criticals in the Fire Emblem style?
-6. **Promotion lines** (section 7). Are Revenant → Blackguard and Acolyte →
-   Archlich the overlord's own ranks, as written here, or unit promotion lines?
-7. **Holy damage.** Written here as "a unit killed by Holy damage leaves no
-   corpse". Is that what "destroys a unit outright" meant?
-8. **Corpse piles** (3.3). Several corpses can share a tile and one burn
-   destroys them all. Agree?
-9. **Dismiss** (3.5). A free action that turns one of your undead into a corpse
-   so you can raise something else. Agree?
-10. **Consecration lasts until the cleric dies** (3.6). Agree?
-11. **Outer display shows part of the map and scrolls** (12.3), instead of
-    shrinking the map to fit. Agree, or prefer a smaller map?
-12. **Vertical slice contents.** Proposed: overlord (no path, cap 5) with 2
-    Skeletons, 1 Bone Archer and 1 Ghoul, against 3 Militia, 1 Archer, 1 Knight,
-    1 Cleric and 1 Pyromancer, on a 16 × 12 map with two graveyard tiles. Win by
-    routing the enemy.
+| # | Item | Outcome |
+|---|---|---|
+| 1 | Campaign structure | Hybrid, built linear first |
+| 2 | Personal or App Store | Eventual App Store release |
+| 3 | Art | Sprites from Google's image generation (setup as used for Gravewright). Pixel art vs high-resolution still to be chosen after display measurements |
+| 4 | Title, overlord name | To be workshopped |
+| 5 | Randomness | **Changed:** hit chances and criticals, as in section 3.2 |
+| 6 | Promotion lines | The overlord's own ranks |
+| 7 | Holy damage | A unit killed by Holy damage leaves no corpse |
+| 8 | Corpse piles | Yes |
+| 9 | Dismiss | Yes |
+| 10 | Consecration lasts until the cleric dies | Yes |
+| 11 | Outer display scrolls | Yes |
+| 12 | Slice line-up | Overlord (cap 5), 2 Skeletons, 1 Bone Archer, 1 Ghoul against 3 Militia, 1 Archer, 1 Knight, 1 Cleric, 1 Pyromancer, on a 16 × 12 map with two starting corpses |

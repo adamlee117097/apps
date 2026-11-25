@@ -109,6 +109,19 @@ public struct GameState: Codable, Equatable, Sendable {
     public var nextUnitID: Int
     public var nextCorpseID: Int
     public var nextSequence: Int
+    /// State of the battle's random number generator. Saved with everything else, so a
+    /// reloaded battle rolls exactly what the original would have.
+    public var rngState: UInt64
+
+    /// A number from 0 to 99, advancing the generator (SplitMix64).
+    mutating func rollPercent() -> Int {
+        rngState &+= 0x9E37_79B9_7F4A_7C15
+        var z = rngState
+        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
+        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
+        z ^= z >> 31
+        return Int(z % 100)
+    }
 
     public func contains(_ p: Position) -> Bool {
         p.x >= 0 && p.y >= 0 && p.x < width && p.y < height

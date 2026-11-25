@@ -5,8 +5,8 @@ Last updated: 2026-11-25
 ## Current phase
 
 Linux work between GATE 2 and the Mac. The rules module, data files and unit
-tests exist and pass. **Next step needs the Mac** (Phase 2 rendering and UI),
-or Adam's answers to the open questions below.
+tests exist and pass. GATE 2 is fully resolved. **The next step needs the Mac** (Phase 2 rendering and
+UI).
 
 ## Working environment
 
@@ -23,10 +23,11 @@ or Adam's answers to the open questions below.
 - GDD draft 1 (`docs/GDD.md`). GATE 2: the four brief items are decided
   (hybrid campaign, App Store release, Google image generation for sprites,
   title to be workshopped). See `docs/DECISIONS.md`.
-- `NecroRules` Swift package: grid and movement, combat with the type chart,
+- `NecroRules` Swift package: grid and movement, combat with hit and critical
+  chances from a seeded, saved random sequence, the type chart,
   corpses and piles, raise, command cap, dismiss, consecration, corpse burning,
   holy kills, overlord fail state, rout victory, undo of moves, save and load,
-  and an enemy AI that consecrates and burns corpses. 49 tests pass locally.
+  and an enemy AI that consecrates and burns corpses. 60 tests pass locally and in GitHub Actions.
 - Data files: 20 units, the rules constants and type chart, and the slice map
   (16 × 12).
 - GitHub Actions workflow for `swift test` on Linux.
@@ -42,18 +43,17 @@ or Adam's answers to the open questions below.
 
 ## Next
 
-1. Adam confirms or changes GDD section 13 items 5 to 12 (currently
-   provisional defaults).
-2. Research Google image generation from primary sources before making art
+1. Research Google image generation from primary sources before making art
    (see DECISIONS.md).
-3. On the Mac: the checks in brief 2.1; sign in to Xcode with a free Apple
+2. On the Mac: the checks in brief 2.1; sign in to Xcode with a free Apple
    Account; a fold/unfold prototype in the iPhone Duo simulator; read the
    display scale factors (RESEARCH.md 8.4). Then Phase 2: the app target with
    SwiftUI and SpriteKit on top of `NecroRules`.
 
 ## Open questions for Adam
 
-1. GDD section 13 items 5 to 12: are the provisional defaults right?
+1. Critical hits were added along with hit chances. Keep them, or misses
+   only?
 2. Answered 2026-11-25: the Google image API and accounts are the ones used
    for Adam's earlier Gravewright project, recorded in that project's Claude
    memory on Adam's own computer. That memory is not readable from a cloud

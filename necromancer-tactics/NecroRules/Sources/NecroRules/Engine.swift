@@ -18,7 +18,8 @@ public enum Action: Equatable, Sendable {
 /// What happened as a result of an action, in order. The renderer animates these.
 public enum Event: Equatable, Sendable {
     case moved(unit: Int, from: Position, to: Position)
-    case attacked(attacker: Int, defender: Int, damage: Int, isCounter: Bool)
+    case attacked(attacker: Int, defender: Int, damage: Int, isCritical: Bool, isCounter: Bool)
+    case missed(attacker: Int, defender: Int, isCounter: Bool)
     case died(unit: Int, definitionID: String, at: Position, leftCorpse: Bool)
     case healed(unit: Int, amount: Int)
     case raised(unit: Int, definitionID: String, at: Position, by: Int)
@@ -50,17 +51,30 @@ public enum RuleError: Error, Equatable {
     case noFreeTile
 }
 
-/// The exact result an attack would have. There is no randomness, so this is not an estimate.
-public struct Forecast: Equatable, Sendable {
+/// One side's half of an exchange: what a strike does if it lands, and how likely it is to land.
+public struct StrikeOdds: Equatable, Sendable {
+    /// Damage on an ordinary hit.
     public var damage: Int
+    /// Damage on a critical hit.
+    public var criticalDamage: Int
+    /// Chance to hit, 0 to 100. This is the true chance: one roll, no hidden adjustment.
+    public var hitChance: Int
+    /// Chance that a hit is critical, 0 to 100.
+    public var criticalChance: Int
     public var matchup: Matchup
+    /// True if an ordinary hit would kill.
     public var kills: Bool
-    /// False when the kill is by a Holy attacker, or the target is the overlord.
+    /// True if only a critical hit would kill.
+    public var killsOnCritical: Bool
+}
+
+/// What the player is shown before confirming an attack.
+public struct Forecast: Equatable, Sendable {
+    public var strike: StrikeOdds
+    /// False when a kill would be by a Holy attacker, or the target is the overlord.
     public var leavesCorpse: Bool
-    /// Nil when the defender cannot strike back.
-    public var counterDamage: Int?
-    public var counterMatchup: Matchup
-    public var counterKills: Bool
+    /// The defender's reply if it survives. Nil when it cannot reach the attacker.
+    public var counter: StrikeOdds?
 }
 
 /// The rules. Holds no state of its own; every function takes the state it works on.
@@ -121,38 +135,45 @@ public struct Engine: Sendable {
         return g
     }
 
-    private func damage(from attacker: BattleUnit, to defender: BattleUnit, defenderAt: Position, in state: GameState) -> (Int, Matchup) {
+    /// The odds of `attacker`, standing at `attackerAt`, striking `defender` at `defenderAt`.
+    public func odds(attacker: BattleUnit, at attackerAt: Position, defender: BattleUnit, at defenderAt: Position,
+                     in state: GameState) -> StrikeOdds {
+        let rules = data.rules
         let a = definition(of: attacker)
         let d = definition(of: defender)
         let defence = a.damage == .physical ? effectiveGuard(of: defender, at: defenderAt, in: state) : d.ward
-        let matchup = data.rules.matchup(attacker: a.type, defender: d.type)
+        let matchup = rules.matchup(attacker: a.type, defender: d.type)
         let base = max(0, a.might - defence)
+        var hit = a.hit - d.avoid
+        if state.terrain(at: defenderAt) == .rough { hit -= rules.roughAvoidBonus }
         let scaled: Int
         switch matchup {
-        case .advantage: scaled = base * data.rules.advantage.numerator / data.rules.advantage.denominator
-        case .disadvantage: scaled = base * data.rules.disadvantage.numerator / data.rules.disadvantage.denominator
-        case .neutral: scaled = base
+        case .advantage:
+            scaled = base * rules.advantage.numerator / rules.advantage.denominator
+            hit += rules.matchupHitBonus
+        case .disadvantage:
+            scaled = base * rules.disadvantage.numerator / rules.disadvantage.denominator
+            hit -= rules.matchupHitBonus
+        case .neutral:
+            scaled = base
         }
-        return (max(1, scaled), matchup)
+        let damage = max(1, scaled)
+        let critical = max(damage, damage * rules.critical.numerator / rules.critical.denominator)
+        return StrikeOdds(damage: damage, criticalDamage: critical,
+                          hitChance: min(100, max(0, hit)), criticalChance: min(100, max(0, a.crit)),
+                          matchup: matchup, kills: damage >= defender.hp,
+                          killsOnCritical: damage < defender.hp && critical >= defender.hp)
     }
 
-    /// What would happen if `attacker`, standing at `from` (its current tile by default), attacked `defender`.
+    /// What the player is shown before `attacker`, standing at `from` (its current tile by default), attacks `defender`.
     public func forecast(attacker: BattleUnit, defender: BattleUnit, from: Position? = nil, in state: GameState) -> Forecast {
         let origin = from ?? attacker.position
-        let a = definition(of: attacker)
-        let d = definition(of: defender)
-        let (dmg, matchup) = damage(from: attacker, to: defender, defenderAt: defender.position, in: state)
-        let kills = dmg >= defender.hp
-        var result = Forecast(damage: dmg, matchup: matchup, kills: kills,
-                              leavesCorpse: kills && a.type != .holy && !d.overlord,
-                              counterDamage: nil, counterMatchup: .neutral, counterKills: false)
-        if !kills && inRange(d, from: defender.position, to: origin) {
-            let (back, backMatchup) = damage(from: defender, to: attacker, defenderAt: origin, in: state)
-            result.counterDamage = back
-            result.counterMatchup = backMatchup
-            result.counterKills = back >= attacker.hp
-        }
-        return result
+        let strike = odds(attacker: attacker, at: origin, defender: defender, at: defender.position, in: state)
+        let canCounter = inRange(definition(of: defender), from: defender.position, to: origin)
+        return Forecast(
+            strike: strike,
+            leavesCorpse: definition(of: attacker).type != .holy && !definition(of: defender).overlord,
+            counter: canCounter ? odds(attacker: defender, at: defender.position, defender: attacker, at: origin, in: state) : nil)
     }
 
     /// The number of undead under the player's command. The overlord does not count.
@@ -226,11 +247,12 @@ public struct Engine: Sendable {
             let (index, unit) = try actor(id, state)
             guard let target = state.unit(id: targetID), target.side != unit.side else { throw RuleError.invalidTarget }
             guard inRange(definition(of: unit), from: unit.position, to: target.position) else { throw RuleError.outOfRange }
-            let f = forecast(attacker: unit, defender: target, in: state)
             finish(index, &state)
-            strike(attackerID: id, defenderID: targetID, damage: f.damage, isCounter: false, &state, &events)
-            if let back = f.counterDamage, state.outcome == .ongoing {
-                strike(attackerID: targetID, defenderID: id, damage: back, isCounter: true, &state, &events)
+            strike(attackerID: id, defenderID: targetID, isCounter: false, &state, &events)
+            // The defender replies if it is still standing and can reach the attacker.
+            if state.outcome == .ongoing, let survivor = state.unit(id: targetID), let attackerNow = state.unit(id: id),
+               inRange(definition(of: survivor), from: survivor.position, to: attackerNow.position) {
+                strike(attackerID: targetID, defenderID: id, isCounter: true, &state, &events)
             }
 
         case let .raise(id, corpseID):
@@ -343,12 +365,21 @@ public struct Engine: Sendable {
         }
     }
 
-    private func strike(attackerID: Int, defenderID: Int, damage: Int, isCounter: Bool,
+    /// Rolls and resolves one strike. Two rolls at most: one to hit, and if it hits, one for a critical.
+    private func strike(attackerID: Int, defenderID: Int, isCounter: Bool,
                         _ state: inout GameState, _ events: inout [Event]) {
         guard let attacker = state.unit(id: attackerID),
               let defenderIndex = state.units.firstIndex(where: { $0.id == defenderID }) else { return }
+        let defender = state.units[defenderIndex]
+        let o = odds(attacker: attacker, at: attacker.position, defender: defender, at: defender.position, in: state)
+        guard state.rollPercent() < o.hitChance else {
+            events.append(.missed(attacker: attackerID, defender: defenderID, isCounter: isCounter))
+            return
+        }
+        let isCritical = state.rollPercent() < o.criticalChance
+        let damage = isCritical ? o.criticalDamage : o.damage
         state.units[defenderIndex].hp -= damage
-        events.append(.attacked(attacker: attackerID, defender: defenderID, damage: damage, isCounter: isCounter))
+        events.append(.attacked(attacker: attackerID, defender: defenderID, damage: damage, isCritical: isCritical, isCounter: isCounter))
         guard state.units[defenderIndex].hp <= 0 else { return }
 
         let dead = state.units.remove(at: defenderIndex)

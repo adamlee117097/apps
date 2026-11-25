@@ -38,11 +38,11 @@ func playScriptedPlayerPhase(_ engine: Engine, _ state: inout GameState) throws 
     if state.outcome == .ongoing { try engine.apply(.endPhase, to: &state) }
 }
 
-func playSlice(turns: Int) throws -> GameState {
+func playSlice(turns: Int, seed: UInt64 = 1) throws -> GameState {
     let data = try GameData.bundled()
     let engine = Engine(data: data)
     let ai = EnemyAI(engine: engine)
-    var state = try GameState(map: GameData.bundledMap("slice01"), data: data)
+    var state = try GameState(map: GameData.bundledMap("slice01"), data: data, seed: seed)
     for _ in 0..<turns where state.outcome == .ongoing {
         try playScriptedPlayerPhase(engine, &state)
         try ai.runPhase(&state)

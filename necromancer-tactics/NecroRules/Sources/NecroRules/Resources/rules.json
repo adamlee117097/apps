@@ -10,6 +10,9 @@
     "holy":   { "flesh": "-", "spirit": "+" },
     "sovereign": {}
   },
+  "critical": { "numerator": 2, "denominator": 1 },
+  "matchupHitBonus": 15,
+  "roughAvoidBonus": 10,
   "roughMoveCost": 2,
   "roughGuardBonus": 1,
   "bulwarkGuardBonus": 1,

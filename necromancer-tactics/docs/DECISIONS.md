@@ -68,22 +68,27 @@ sprites. And we'll workshop the final title."
 - **Title:** to be workshopped. "Necromancer Tactics" stays as the working
   title.
 
-## 2026-11-25: GDD section 13 items 5 to 12, provisional
+## 2026-11-25: GDD section 13 items 5 to 12, decided
 
-Adam answered the four brief items and did not comment on items 5 to 12.
-Claude proceeded with the GDD's proposals as provisional defaults so the rules
-module could be built. Each is a data or small code change to reverse:
+Adam's words: "I definitely think there should be a miss or a hit chances,
+like Fire Emblem. Yes to holy damage. Yes to corpse piles. Yes to number 5. I
+would say yes to everything."
 
-- No randomness in combat.
-- Promotion lines read as the overlord's own ranks (not yet in code).
+- **Combat has hit chances.** This reverses the draft's no-randomness proposal.
+  Implemented as: chance to hit = Hit − Avoid, ±15 for type matchup, −10 for a
+  defender on rough ground; one honest roll, the displayed number is the real
+  chance.
+- **Critical hits are included** (double damage, 0 to 10 percent by unit).
+  Adam named misses and hit chances; criticals were part of the same question
+  and of the Fire Emblem model he pointed to, so Claude included them. They can
+  be removed by setting Crit to 0 in `units.json`. To confirm with Adam.
+- **Rolls are seeded and saved.** The random state is part of `GameState`, so
+  the rules stay deterministic and testable, and a reloaded save repeats the
+  same roll for the same action.
+- Promotion lines are the overlord's own ranks.
 - A unit killed by Holy damage leaves no corpse.
-- Several corpses can share a tile; one burn destroys the pile.
-- Dismiss: a free action, once per phase.
-- Consecration lasts until the cleric who cast it dies; two areas per cleric.
-- The outer display scrolls rather than shrinking the map (not yet in code).
-- Slice line-up as in GDD 13.12.
-
-**Status:** awaiting Adam's confirmation or changes.
+- Corpse piles: yes. Dismiss: yes. Consecration lasts until its cleric dies:
+  yes. Outer display scrolls: yes. Slice line-up: as proposed.
 
 ## 2026-11-25: Rules module structure
 
@@ -102,5 +107,5 @@ module could be built. Each is a data or small code change to reverse:
 | Gate | Status | Date | Outcome |
 |---|---|---|---|
 | GATE 1: engine, build pipeline, feature feasibility | Approved | 2026-11-25 | Native Swift: SwiftUI + SpriteKit, rules in a pure Swift package |
-| GATE 2: GDD review, items in brief 3.5 | Brief items resolved; design defaults provisional | 2026-11-25 | Hybrid campaign, App Store release, AI-generated sprites, title to be workshopped |
+| GATE 2: GDD review, items in brief 3.5 | Resolved | 2026-11-25 | Hybrid campaign, App Store release, AI-generated sprites, title to be workshopped, hit chances in combat |
 | GATE 3: vertical slice played on device | Not reached | | |

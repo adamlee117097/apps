@@ -664,7 +664,8 @@ Reasons:
 3. The rules module is plain Swift, so the work done on Linux moves to the Mac
    unchanged, as the brief requires.
 4. Pencil, Core Haptics, Game Controller and GameKit need no bridging.
-5. Swift source and a text-based Xcode project format (new in Xcode 27) are
+5. Swift source and the JSON Xcode project format (listed under September 2026 at
+   <https://developer.apple.com/documentation/updates/xcode>) are
    straightforward for Claude Code to edit and build from the command line.
 
 What it costs:

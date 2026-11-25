@@ -318,5 +318,178 @@ and
   later"; whether Apple counts iPhone Duo under that phrase is not stated. The
   spec page does confirm 120Hz ProMotion on both displays.
 
-Sections 5 to 8 (engine comparison, sprite pipeline, reference games,
-recommendation) are in progress.
+## 5. Engine and framework options (brief 2.2)
+
+In progress.
+
+## 6. 2D sprite pipeline (brief 2.4)
+
+### 6.1 Display scale and resolution
+
+- iOS uses "@2x and @3x" assets: "A 2:1 density (called @2x) has a scale factor
+  of 2, and a 3:1 density (called @3x) has a scale factor of 3."
+  <https://developer.apple.com/design/human-interface-guidelines/images>
+- **iPhone Duo's scale factor and point dimensions are unverified.** They are
+  not in the HIG layout page, the HIG iPhone Duo page, or the developer article.
+  They can be read at runtime (`traitCollection.displayScale` and the scene's
+  bounds) in the simulator, which settles it on day one on the Mac.
+- **Open discrepancy on the inner display.** App Store Connect asks for inner
+  display screenshots at "2007 × 2853 pixels", while the hardware spec is
+  1878 × 2670. The outer display matches its hardware spec (1398 × 2034).
+  <https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications>
+  Apple does not explain the difference on the pages read. One possible cause
+  is that the inner display renders at a larger size and scales down to the
+  panel; that is a guess. What it means for us: **do not assume one rendered
+  pixel equals one physical pixel on the inner display** until it is measured.
+  This matters most for pixel art.
+
+### 6.2 Pixel art vs high-resolution 2D
+
+- Apple's game guidance prefers art that is not tied to one resolution: "Prefer
+  resolution-independent textures and graphics. If creating
+  resolution-independent assets isn't possible, match the resolution of your
+  game to the resolution of the device."
+  <https://developer.apple.com/design/human-interface-guidelines/designing-for-games>
+- Apple's iPhone Duo guidance for games: "Make your game playable in every
+  device pose. You can choose to lock to either portrait or landscape
+  orientation, but be sure to fill the screen as the device pose changes. When
+  resizing, keep text and control sizes as consistent as possible. Prefer
+  changing the aspect ratio over letterboxing or pillarboxing in games".
+  <https://developer.apple.com/design/human-interface-guidelines/designing-for-iphone-duo>
+- Pixel art looks correct only at whole-number scale factors. Godot's docs put
+  it this way: "since displays can only display "whole" pixels, this will lead
+  to uneven pixel scaling which results in incorrect appearance of pixel art",
+  and with integer scaling "The remaining space is filled with black bars on all
+  four sides".
+  <https://docs.godotengine.org/en/stable/tutorials/rendering/multiple_resolutions.html>
+- In SpriteKit, pixel art needs nearest-neighbour filtering set per texture,
+  because "The default value is linear".
+  <https://developer.apple.com/documentation/spritekit/sktexture/filteringmode>
+
+Inference: two displays at 430 and 460 ppi, a possible non-1:1 inner display
+(6.1), user-resizable Split View, and Apple's request not to letterbox all work
+against strict pixel-perfect pixel art. The options are:
+
+1. **High-resolution 2D** drawn large and scaled down with linear filtering.
+   Scales cleanly to any size. Costs more to produce by hand.
+2. **Pixel art at whole-number scale**, with the map showing more or fewer
+   tiles or decorative margin to fill the leftover space. Keeps crisp pixels;
+   needs care at each display size.
+3. **Pixel art scaled freely** with slight softness or uneven pixels. Simplest,
+   looks worst.
+
+This is one of the GATE 2 decisions in the brief. The slice uses placeholder
+art either way, so it does not block GATE 1.
+
+### 6.3 Tools
+
+- **Xcode sprite atlases.** "inside the new asset catalog, add a new sprite
+  atlas." "sprite atlases support app thinning". "Texture atlases improve memory
+  usage and rendering performance by reducing draw calls."
+  <https://developer.apple.com/documentation/spritekit/about-texture-atlases>,
+  <https://developer.apple.com/documentation/spritekit/sktextureatlas>
+- **Aseprite** (pixel art editor). Command-line export of sprite sheets with a
+  JSON description is documented: `--sheet file.png --data file.json`, with
+  `--format json-hash` or `json-array`.
+  <https://raw.githubusercontent.com/aseprite/docs/main/cli.md>. Its price was
+  not confirmed from aseprite.org (host blocked); store listings found by
+  search say $19.99.
+- **TexturePacker**: not confirmed from its own site (host blocked). Not needed
+  if Xcode atlases or the engine's own packer are used.
+
+### 6.4 Placeholder art
+
+- Plan: coloured shapes with a letter or icon per unit type, generated in code
+  or as simple PNGs. No licence questions, and it makes unit type and side
+  readable at a glance.
+- Kenney's asset packs are reported as CC0 (public domain), but this was read
+  only from search results and one of Kenney's GitHub READMEs ("Sprites and 3D
+  Models (CC0 licensed)",
+  <https://raw.githubusercontent.com/KenneyNL/Starter-Kit-3D-Platformer/main/README.md>),
+  not from kenney.nl itself. If a pack is used, the `License.txt` inside the
+  download is the authority.
+
+## 7. Reference games (brief 2.5)
+
+**Sourcing limit.** The publishers' and developers' sites (Nintendo, Subset
+Games, Square Enix, App Store listings, TouchArcade) were blocked from this
+session. Everything in 7.1 comes from search-result excerpts of those pages,
+not from the pages themselves, so the quotes may not be exact. Items marked
+"from memory" have no source at all. Allowing those hosts, or Adam checking the
+games directly, would firm this up. Apple's guidance in 7.2 was read first-hand.
+
+### 7.1 What each game does
+
+| Game | Finding | Source quality |
+|---|---|---|
+| Fire Emblem Heroes (mobile) | Drag a unit onto its target to attack: "easy touch and drag controls, including the ability to attack by simply swiping an ally over an enemy". Maps "fit in the palm of your hand". | Excerpt of fire-emblem-heroes.com/en/system |
+| | Map is 6 × 8 in portrait, so the whole battlefield is on screen with no scrolling. | Excerpt of a news article; no official source found |
+| | Combat forecast appears while holding a dragged unit over an enemy, "at the top of the screen", away from the finger. | Excerpt of the official guide |
+| | Enemy attack range is a one-tap "Danger Area" toggle, with a setting to keep it always on. | Excerpt of the official guide |
+| Fire Emblem on Switch (handheld) | Handheld mode supported. Touch control of the battle map: not found in any source. | Excerpt of Nintendo store page; touch unverified |
+| Into the Breach (iOS, via Netflix) | Released on iOS and Android through Netflix in July 2022. Whether it is still available in November 2026 was not confirmed. | Excerpt of news coverage |
+| | 8 × 8 board, whole board visible. Enemy actions for the next turn are always shown. | Excerpts (gamedeveloper.com, reviews) |
+| | Moves can be undone freely; a full "Reset Turn" is limited to once per battle. | Excerpt of a review |
+| | Designer Justin Ma: "sacrifice cool ideas for the sake of clarity every time". | Excerpt of a gamedeveloper.com interview title |
+| Advance Wars 1+2: Re-Boot Camp | Handheld mode supported. Reviews disagree on whether it has touch controls; no official statement found. | Conflicting excerpts; unverified |
+| Final Fantasy Tactics: War of the Lions (iOS) | Exists on iOS with tap controls; controller support was added later. Reviews disagree on how good the touch controls are. | Excerpts |
+| | The 2025 Ivalice Chronicles release lists Switch, PlayStation, Xbox and PC, with no mobile version. | Excerpt of Square Enix announcement |
+| Legend of Keepers | Villain-side dungeon defence. Came to iOS and Android in May 2023 with an "interface designed for mobile". | Excerpts |
+| Iratus: Lord of the Dead | Necromancer protagonist. Windows, Linux, Mac only as far as sources show. | Excerpt of developer factsheet |
+
+From memory, unsourced: Legend of Keepers and Iratus are not grid-movement
+games (lane and rank combat), so they inform theme and the villain fantasy, not
+touch grid controls. Final Fantasy Tactics uses an isometric map with height.
+
+### 7.2 Apple's guidance (read first-hand)
+
+- Touch target size: "Make sure frequently used controls are a minimum size of
+  44x44 pt, and less important controls, such as menus, are a minimum size of
+  28x28 pt to accommodate people's fingers."
+  <https://developer.apple.com/design/human-interface-guidelines/game-controls>
+- "consider letting players tap objects to select them instead of adding a
+  virtual selection button." (same page)
+- "Place frequently used buttons near a player's thumb... Place secondary
+  controls, like menus, at the top of the screen." (same page)
+- Controllers: "If you support game controllers, try to make sure there's a
+  fallback for using the platform's default interaction method." (same page)
+- Text: default 17 pt, minimum 11 pt on iOS.
+  <https://developer.apple.com/design/human-interface-guidelines/designing-for-games>
+- "avoid relying solely on color to convey an important detail" (same page).
+  This applies to range overlays, the counter triangle and consecrated tiles.
+- Fold: "In a grid-style layout, prefer an even number of columns so content
+  divides cleanly."
+  <https://developer.apple.com/design/human-interface-guidelines/designing-for-iphone-duo>
+- Continuity: "Keep functionality and the state of elements the same between
+  displays." (same page)
+- Pencil: the HIG's Apple Pencil page is still iPad-only and says nothing about
+  iPhone Duo. Its general advice applies: "ensure that your app's controls
+  respond to Apple Pencil so people don't have to switch to using their finger".
+  <https://developer.apple.com/design/human-interface-guidelines/apple-pencil-and-scribble>
+
+### 7.3 Design conclusions (inference, for the GDD)
+
+1. **A tile must be at least 44 pt** to be a comfortable finger target. How
+   many tiles fit therefore depends on the point size of each display, which is
+   unverified (6.1). If the displays are @3x, the outer display is about
+   466 × 678 pt and a 12 × 16 map gives tiles of about 39 to 42 pt: slightly
+   under the guideline. The brief's 12 × 16 map probably fits the inner display
+   comfortably and is marginal on the outer one. Options to decide at GATE 2:
+   scroll and zoom on the outer display, or a smaller map.
+2. **Support both drag and tap-tap** for moving and attacking. Drag is fast for
+   fingers; tap-tap is precise and suits the Pencil.
+3. **Show the combat forecast away from the finger**, at a screen edge or in the
+   side panel, never under the touch point.
+4. **Free undo of movement, explicit confirmation of attacks and raises.**
+   Mis-taps are the main touch risk.
+5. **Enemy threat range as a one-tap toggle.** In this game the same idea
+   extends to showing which corpses an enemy cleric or fire user can reach next
+   turn, since corpse denial is the central tension.
+6. **Even number of map columns across the fold**, so the fold lands between
+   tiles when the phone is partly folded. 16 and 12 are both even.
+7. **Flat top-down grid**, not isometric, for tap accuracy.
+8. **Never rely on colour alone** for side, undead type or tile state.
+
+## 8. Recommendation and GATE 1
+
+In progress.

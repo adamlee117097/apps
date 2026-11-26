@@ -2,7 +2,8 @@
 
 Working title: Necromancer Tactics. Draft 3, 2026-11-26. GATE 2 decisions are in
 section 13. Draft 3 adds the design principles from the updated brief (section
-2.1) and the changes they call for (section 14), which await Adam's review.
+2.1), the changes they call for (section 14), and ideas drawn from three
+references Adam shared (section 15). Sections 14 and 15 await Adam's review.
 
 Status of what is in here:
 
@@ -733,6 +734,9 @@ What this costs:
 
 ### 14.3 Minions that scale (principle 3)
 
+Section 15.2 proposes a fourth layer, ranks earned by each unit, and a firmer
+version of layer 2. If Adam accepts it, 15.3 says what changes here.
+
 Proposed, in three layers:
 
 1. **The overlord's level lifts every undead.** For each two overlord levels
@@ -807,49 +811,115 @@ This is campaign design for later phases. The slice does not need it.
 
 ## 15. Ideas drawn from Adam's references (proposed)
 
-On 2026-11-26 Adam shared two references: a painted armoured dark lord, and the
-anime *Overlord*, with the instruction to draw inspiration from it. Both are
-other people's work. This game takes **ideas and mood only**: no names,
-characters, places, plot, dialogue or designs.
+On 2026-11-26 Adam shared three references: a painted armoured dark lord, the
+anime *Overlord*, and *Solo Leveling*, with the instruction to draw inspiration
+from them and to read about the two series on Wikipedia. All three are other
+people's work. This game takes **ideas and mood only**: no names, characters,
+places, plot, dialogue, terms or designs.
 
-Sourcing: the screenshot Adam sent shows the title, the genre tags (among them
-"Villains"), a synopsis and four episode titles. Everything else below about the
-series is from Claude's general knowledge of it and was not checked against a
-source in this session.
+Sourcing: what Wikipedia says about each series is in `RESEARCH.md` 7.6, with
+quotations checked by script. In the tables below, **W** marks a point found on
+Wikipedia and **U** marks a point that is only Claude's recollection of the
+series and is unverified. Claude has not watched or read either series in this
+session. Nothing in this section is in the code.
 
-What the series does well that fits this game, and how it could appear here:
+### 15.1 From *Overlord*
 
-| Idea | In this game | Status |
-|---|---|---|
-| The ruler has named lieutenants, each with a strong personality, a domain to guard, and fierce loyalty | Raised named heroes become **lieutenants**. Each can be posted to a part of the keep and fights there in keep-defence battles; each has a voice and an opinion of the overlord | New. Builds on the agreed "raise defeated heroes" and the keep |
-| The stronghold is a place with its own defenders, level by level | Keep-defence maps are made of the rooms the player built (section 8), each held by the lieutenant posted there | Extends section 8 |
-| A village the ruler spares or protects becomes his | A second reaction beside fear: **Fealty**. Sparing or defending a village can make it a vassal that gives tribute and bodies willingly, where terror makes it flee or resist. Notoriety (14.6) becomes two things the world tracks: how feared, and how obeyed | Extends 14.6 |
-| The outside world misjudges him, schemes against him, and is slowly outmatched | Enemy factions act on what they believe about the overlord. Early, they send too little; as Notoriety grows they send holy orders and named heroes (already agreed for the Reckoning act) | Fits the agreed arc |
-| The ruler is at his most frightening late, when he finally acts himself | Matches Adam's decision that the overlord becomes the hardest hitter only once well levelled (14.1) | Decided |
-| Told from the villain's side, without apology, with the heroes as the threat | Already the pitch | Agreed |
-| Raising the fallen is shown as a display of power, not a chore | The raise should be the most satisfying action in the game: its own animation, sound and haptic (hardware feature 5) | Presentation goal |
+| What the series does | Source | In this game | Status |
+|---|---|---|---|
+| Named lieutenants each hold one level of the ruler's stronghold | W | Raised named heroes become **lieutenants**. Each can be posted to a room of the keep and fights there in keep-defence battles | Proposed. Builds on the agreed "raise defeated heroes" and section 8 |
+| Raiders who enter the stronghold die to its undead | W | Keep-defence maps are made of the rooms the player built, each held by the lieutenant posted there | Extends section 8 |
+| A village the ruler saved sides with him against its own kingdom, and he posts a servant to guard it | W | A second reaction beside fear: **Fealty**. Sparing or defending a village can make it a vassal that gives tribute and bodies willingly, where terror makes it flee or resist. A lieutenant can be posted to a vassal village and defends it in raids | Extends 14.6 |
+| The lieutenants act on their own reading of what the ruler wants, and he ends up following | W | **Lieutenant initiative.** Between battles a posted lieutenant may act in the overlord's name: take a hamlet, punish one, spare prisoners. The player endorses or overrules. Either answer moves Fear or Fealty and suits some lieutenants better than others | New. Campaign layer, later phase |
+| A defeated enemy asks not to be brought back, and the ruler honours it | W | **Last request.** Some named heroes, when they fall, ask to be left dead. Honour it: no lieutenant, but Fealty rises with that hero's people. Raise them anyway: the strongest unit in the game, Fear rises, and that faction starts burning its own dead | New. A choice made with a body, which is the game's subject |
+| A servant's mercy to outsiders sets him against the others | W | Lieutenants keep the temperament they had in life. One raised from a merciful hero prefers Fealty; one raised from a zealot prefers Fear. This is what gives initiative its variety | New, with initiative |
+| The outside world misjudges the ruler and is slowly outmatched | U | Enemy factions act on what they believe. Early they send too little; as Notoriety grows they send holy orders and named heroes | Fits the agreed arc |
+| The ruler seldom fights in person, and is most frightening when he does | U | Matches Adam's decision that the overlord becomes the hardest hitter only once well levelled (14.1) | Decided |
+| Told from the villain's side, with the heroes as the threat | W ("magnificent power fantasy"); the genre tag "Villains" was on Adam's screenshot | Already the pitch | Agreed |
 
-Look, as mood only (art notes are in `ART_PIPELINE.md`):
+### 15.2 From *Solo Leveling*
+
+| What the series does | Source | In this game | Status |
+|---|---|---|---|
+| The raised soldiers improve, and hold ranks | W | **Ranks for undead** (below). This is the part of principle 3 the design lacked most | New. Adds to 14.3 |
+| Only the high ranks have a voice | W | The rank and file are silent. An undead gets a name and lines only at the top rank or as a lieutenant. This also keeps the writing and sound work small | New |
+| A notable soldier is one particular defeated enemy, taken from its body and renamed by the lead | W | When a named hero is raised, **the player names it** (a default is offered). The roster keeps who it was and where it fell | New. The rules already record which unit a corpse came from |
+| A soldier's rank tracks how strong it was in life | W | A stronger enemy rises at a higher starting rank. This replaces the vaguer "extend to level" in 14.3, layer 2 | Changes 14.3 |
+| He raises in the middle of a fight he could not otherwise win | W | Already the core loop. As a rule for hand-made maps: each has a point where the starting force is not enough and the battle is won with bodies made during it | Map-design rule |
+| The lead starts as the weakest and ends as a ruler | W | The agreed pitch ("rises from nothing") and the Might curve in 14.1 | Agreed |
+| Growth is shown, and that is the reward | W (a reviewer's words) | A **muster** screen after each battle: who gained a rank, who was raised, who was lost for good, the new command cap | New. Presentation |
+| One soldier is kept for use, not for fighting | W | Later, optional: some bodies rise as something useful instead of a fighter, for example a beast the overlord rides for extra movement | Idea only |
+| The enemies are rival rulers, each with a kind of its own | W | Stretch: a rival undead lord as a late enemy, so that both sides raise from the same bodies. The agreed arc has the living hunt the overlord; this would be an addition, not a replacement | Question for Adam |
+| The raise is the signature moment | U; the second season's subtitle is on Wikipedia | The raise is the most satisfying action in the game: its own animation, sound and haptic (hardware feature 5) | Presentation goal |
+| Everything raised shares one look | U | Every undead the player controls carries one shared mark, a single glow colour, so that twenty units read as one army at map size and a newly raised enemy visibly changes sides | Art idea, in `ART_PIPELINE.md` section 6 |
+
+**Ranks for undead (proposed numbers, placeholders).**
+
+- Every undead in the roster has a rank, 1 to 4. Rank is earned by kills: 3
+  kills for rank 2, 8 for rank 3, 15 for rank 4.
+- Each rank above the first gives +2 HP and +5 Hit. Ranks give **no Might**, so
+  the curve Adam decided in 14.1 holds as written: from level 7 the overlord
+  still out-hits every ordinary undead.
+- At rank 4 the unit gets a name, chosen by the player.
+- **Rank survives death.** A ranked unit that falls and is raised again keeps
+  its rank, in line with pillar 2 (no penalty for being raised again). It is
+  lost only if the enemy destroys the body. The enemy's burning and
+  consecrating therefore cost more as the campaign goes on, which is the fight
+  over the bodies with something at stake.
+- Raised enemies start at a rank set by what they were: militia at 1, knights
+  and clerics at 2, named heroes at 3.
+- Under the Lich King path raised enemies still crumble after the battle, as
+  agreed. Ranks apply to the core roster that carries over. The overlord-level
+  bonus in 14.3, layer 1, is what keeps the disposable units from falling
+  behind.
+- The rank names are to be our own. The series' ladder is not used.
+
+### 15.3 What this changes in section 14
+
+- **14.3 (minions scale)** gains a fourth layer, ranks, and its second layer
+  becomes "starting rank follows what the body was". The keep's single
+  promotion per basic undead (layer 3) is dropped if ranks are accepted, since
+  ranks do that job.
+- **14.6 (the world reacts)** tracks two things, Fear and Fealty, and gains two
+  sources of events: last requests and lieutenant initiative.
+- **14.1, 14.2, 14.4 and 14.5** are unchanged.
+
+### 15.4 Look, as mood only
+
+Art notes are in `ART_PIPELINE.md` section 6.
 
 - The armoured dark lord suits the **Death Knight** path: blackened steel, one
   accent colour, one point of inner light.
-- The anime's ruler is a robed skeletal sorcerer in rich colour and gold. That
-  silhouette family, a tall robed figure with a crowned skull, suits the **Lich
-  King** path, with a design, colours and emblems of our own.
+- *Overlord*'s ruler is skeletal (W) and, as Claude recalls it, robed in rich
+  colour and gold (U). A tall robed figure with a crowned skull suits the
+  **Lich King** path, with a design, colours and emblems of our own.
+- From *Solo Leveling*: one shared mark on everything the player has raised
+  (U for the series; the idea stands on its own). The colour could differ by
+  path.
 
-Two cautions:
+### 15.5 Cautions
 
-- Both references are titled *Overlord*. This game calls its player character
-  "the overlord" as an ordinary word. The final title should not use that word,
-  to avoid confusion with either (inference, not legal advice; a trademark
-  check belongs with the title workshop).
-- The tone of the series includes comedy built on its particular characters.
-  That is theirs. Whether this game has humour at all is Adam's call.
+- **The title.** Two of the references are titled *Overlord*, and Wikipedia
+  records a turn-based game for iOS released under that series' name in 2024
+  (`RESEARCH.md` 7.6). This game calls its player character "the overlord" as
+  an ordinary word, but the final title should not use it (inference, not legal
+  advice; a trademark check belongs with the title workshop).
+- **Words to keep out of the game's vocabulary**, because they are the
+  signature terms of *Solo Leveling*: "Monarch", "shadow soldier", "the System",
+  and "Arise" as the word of command. The game's own terms (overlord, Dread,
+  Dominion, Gravespeaker) are unaffected.
+- **Tone.** *Overlord* includes comedy built on its particular characters. That
+  is theirs. Whether this game has humour at all is Adam's call.
 
-Questions for Adam:
+### 15.6 Questions for Adam
 
-1. Lieutenants posted to parts of the keep: yes?
+1. Lieutenants posted to parts of the keep, and to vassal villages: yes?
 2. Fear and Fealty as two separate reactions from the world: yes, or keep one
    score?
 3. Should the game have any humour, or stay grim?
-
+4. Ranks for undead, earned by kills, kept through being raised again, and
+   lost only when the body is destroyed: yes?
+5. The player names raised heroes and rank 4 undead: yes?
+6. Last requests, with a real choice between honouring and raising: yes?
+7. Lieutenant initiative between battles: wanted, or too much?
+8. A rival undead lord as a late enemy: a stretch goal, or no?

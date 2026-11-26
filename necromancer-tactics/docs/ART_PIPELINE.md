@@ -356,6 +356,25 @@ in a prompt. For art, it points to a robed, crowned-skull silhouette for the
 **Lich King** path, as the armoured figure does for the Death Knight path. The
 game-design ideas taken from it are in GDD section 15.
 
+What Wikipedia says of that ruler's look is only that he is "skeletal"
+(`RESEARCH.md` 7.6). The robes, gold and colour are Claude's recollection and
+were not checked.
+
+**Third reference, 2026-11-26.** Adam added *Solo Leveling*. Wikipedia does not
+describe how that series looks, so nothing about its look is verified here. The
+one art idea taken is general and would stand without the series: **everything
+the player has raised shares one mark**, a single glow colour in the eyes or
+joints.
+
+- At map size (about 44 points a unit) it makes a large army read as one side
+  at a glance, and makes a newly raised enemy visibly change sides.
+- It suggests a way to make each undead from its living form: draw the living
+  unit first, then produce the raised version from our own image, so the
+  silhouette stays recognisable. Whether Google's models do this well is not
+  known; it is a thing to try in the trial in section 5.
+- The mark's colour and form must be our own. The same limits apply as above:
+  mood only, no image stored, and the series is never named in a prompt.
+
 ## 7. Questions for Adam
 
 1. Which Google product and model did Gravewright use, and was it the API with

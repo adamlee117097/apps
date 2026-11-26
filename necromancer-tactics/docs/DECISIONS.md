@@ -219,6 +219,31 @@ clarified: "But that's like after he's really leveled up, though."
 - **Principle 1** (the army is the main source of power) is kept by counting the
   army as a whole. Detail in GDD 14.1.
 
+## 2026-11-26: Three references, and reading about them on Wikipedia
+
+Adam shared a painted armoured dark lord, then the anime *Overlord* ("Also draw
+some inspiration from this anime"), then: "Also solo leveling" and "Read about
+them on wiki pedia".
+
+- `en.wikipedia.org` was added to the cloud environment's allowed hosts, with
+  Adam's approval, so the pages could be read.
+- Three Wikipedia pages were read. What they say is in `RESEARCH.md` 7.6, with
+  30 quotations checked by script. Wikipedia is a secondary source; it is used
+  only to describe the fiction.
+- The first write-up of *Overlord* (GDD 15, earlier the same day) rested on
+  Claude's recollection. It has been redone: each point is now marked as found
+  on Wikipedia or as unverified recollection. Three points remain unverified.
+- **Rule for all three references:** ideas and mood only. No names, characters,
+  places, plot, terms or designs. No reference image is stored in the
+  repository or given to an image generator, and no source is named in a
+  prompt.
+- **Proposed, not decided** (GDD 15): lieutenants posted to the keep and to
+  vassal villages; Fear and Fealty; lieutenant initiative; last requests; ranks
+  for undead, earned by kills and kept through being raised again; the player
+  naming raised heroes; a muster screen after battle; one shared mark on all
+  raised units. Ranks give no Might, so Adam's decision on the overlord's
+  strength is unaffected. No code was changed.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |

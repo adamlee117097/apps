@@ -23,7 +23,7 @@ for the first session there is `MAC_SETUP.md`.
 
 - **Phase 0 research** (`RESEARCH.md`). GATE 1 approved: native Swift, SwiftUI
   around a SpriteKit map.
-- **Design document** (`GDD.md`, draft 3; section 14 awaits review). GATE 2 decided: hybrid campaign,
+- **Design document** (`GDD.md`, draft 3; sections 14 and 15 await review). GATE 2 decided: hybrid campaign,
   eventual App Store release, sprites from Google's image generation, title to
   be workshopped, hit chances in combat.
 - **Rules package** (`NecroRules`): grid and movement with routes, combat with
@@ -48,7 +48,7 @@ for the first session there is `MAC_SETUP.md`.
   terms, watermarking, Apple's rules, and a proposed pipeline. Nothing has been
   generated.
 - **Citation checker** (`tools/citations`): every quotation in `RESEARCH.md`
-  (126), `MAC_SETUP.md` (91) and `ART_PIPELINE.md` (56) is checked against its
+  (156), `MAC_SETUP.md` (91) and `ART_PIPELINE.md` (56) is checked against its
   source page by script.
 
 ## Review of 2026-11-26: what ran and what did not
@@ -97,8 +97,11 @@ part-way.
    design falls short on three (army size, minion scaling, auto-control) and is
    thin on two more. The proposed changes and five questions are in `GDD.md`
    section 14. None is in the code yet.
-   Section 15 adds ideas from two references Adam shared (lieutenants, vassal
-   villages, a look for each path), with three more questions.
+   Section 15 adds ideas from three references Adam shared (a painted dark
+   lord, *Overlord* and *Solo Leveling*): lieutenants, vassal villages, ranks
+   for undead that survive being raised again, naming raised heroes, last
+   requests, and a look for each path. It ends with eight questions. What
+   Wikipedia says about the two series is in `RESEARCH.md` 7.6.
 
 1. Critical hits were added along with hit chances. Keep them, or misses only?
 2. Rule decisions made while fixing review findings, listed in `DECISIONS.md`
@@ -122,8 +125,9 @@ part-way.
 
 - Research was done from a Claude Code cloud environment named
   `necromancer-tactics`. It allows Apple's, Godot's and Unity's sites,
-  `download.swift.org`, and Google's developer documentation
-  (`aistudio.google.com`, where `ai.google.dev` now redirects). Other sites
+  `download.swift.org`, Google's developer documentation
+  (`aistudio.google.com`, where `ai.google.dev` now redirects), and
+  `en.wikipedia.org` (added 2026-11-26 at Adam's request). Other sites
   (Nintendo, App Store listings, game press, `github.com` pages) are blocked
   there.
 - Apple's documentation pages can be read as JSON at

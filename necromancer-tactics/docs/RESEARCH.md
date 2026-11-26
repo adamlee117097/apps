@@ -827,6 +827,78 @@ principles in GDD section 2 rest on it.
 - The overall complaint: necromancer classes do not scale, and the player is
   handed damage spells instead of an army that is the main source of power.
 
+### 7.6 Fiction references: *Overlord* and *Solo Leveling* (added 2026-11-26)
+
+Adam asked that the game draw inspiration from these two series, and that Claude
+read about them on Wikipedia. Three pages were read on 2026-11-26:
+
+- *Overlord*, the novel series and its anime: <https://en.wikipedia.org/wiki/Overlord_(novel_series)>
+- Its character list: https://en.wikipedia.org/wiki/List_of_Overlord_characters
+- *Solo Leveling*: https://en.wikipedia.org/wiki/Solo_Leveling
+
+Limits of this source:
+
+- Wikipedia is a secondary source that anyone can edit. It is used here only to
+  describe two works of fiction, at Adam's direction. Claude has not read or
+  watched either work in this session.
+- Wikipedia itself flags the character section of the *Solo Leveling* article
+  as possibly containing original research and as over-detailed.
+- The quotations below were checked by script against the pages as fetched.
+  That shows Wikipedia says it, not that it is true of the series.
+- Both series are other people's work. This game takes ideas and mood only: no
+  names, characters, places, plot, terms or designs. What the game does with
+  these findings is in GDD section 15.
+
+***Overlord***
+
+| What the series does | Wikipedia's words | Page |
+|---|---|---|
+| The lead is an undead ruler with a stronghold | "continues to play as the guild leader, maintaining their headquarters in The Great Tomb of Nazarick" | <https://en.wikipedia.org/wiki/Overlord_(novel_series)> |
+| Named lieutenants each hold one level of the stronghold | "The Guardian of Nazarick's Seventh Floor, who is in charge of its defenses" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| Lesser servants hold parts of a level under them | "NPCs that serve as mini-bosses for a specific portion of a floor" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| The lieutenants act on their own reading of what the ruler wants, and he ends up following them | "the NPCs believe that he is planning world domination and begin to formulate plans of their own" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| That is how the stronghold becomes a state | "This eventually leads to Nazarick becoming its own nation" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| A village he saved sides with him against its own kingdom | "willingly leave the kingdom when the crown prince attempts to force them to join the fight against him" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| He posts a servant to guard that village | "Ainz later assigns her to protect Carne Village" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| Raiders who come to the stronghold die to its undead | "they are ambushed and killed by a group of undead" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| A defeated enemy asks not to be brought back, and the ruler honours it | "he wishes not to be resurrected if he is defeated, which Ainz honors by casting a spell that nullifies resurrection" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| A servant's mercy to outsiders puts him at odds with the others | "he has a habit of trying to rescue those in need, which often brings him into conflict with other NPCs" | https://en.wikipedia.org/wiki/List_of_Overlord_characters |
+| How a reviewer summed up the appeal | "magnificent power fantasy" | <https://en.wikipedia.org/wiki/Overlord_(novel_series)> |
+| A turn-based game on iOS already carries the series' name | "a turn-based gacha video game, was released worldwide for iOS and Android devices on October 29, 2024" | <https://en.wikipedia.org/wiki/Overlord_(novel_series)> |
+
+Not found on these pages, so still only Claude's recollection of the series and
+unverified: that the outside world underestimates the ruler; that he seldom
+fights in person; how raising the dead is shown; and his look beyond the word
+"skeletal" (robes, gold, rich colour).
+
+***Solo Leveling***
+
+| What the series does | Wikipedia's words | Page |
+|---|---|---|
+| The lead starts as the weakest of his kind | "a notoriously weak E ranked hunter" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| He alone can grow | "the unique ability to level up in strength which is something no other hunter is able to do" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| He becomes a ruler of the dead | "who has absolute rule over the dead" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| His army is made of the dead he has raised | "An immortal race of soldiers resurrected by the power of the Shadow Monarch" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| Those soldiers improve, unlike other summoned creatures in that world | "Unlike summons from other hunters, they are capable of growth and speech" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| They hold ranks | "There are multiple grades of shadow soldiers, including basic grade, normal grade, elite grade, knight grade" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| Only the high ranks have a voice | "Only soldiers of commander/general grade can speak" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| A notable soldier is one particular defeated enemy, taken from its body and given a new name by the lead | "extracts Kim Chul's shadow from his corpse and named him Iron" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| That includes bosses | "an ant shadow that was extracted from the Ant King, a powerful S-Rank beast" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| And human enemies | "Following his death, he becomes one of Jin-woo's shadow soldiers" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| A soldier's rank tracks how strong it was | "As a Knight Grade Shadow, Tank is about as powerful as an A-Rank Hunter" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| He raises in the middle of a fight he could not otherwise win | "Knowing that he would have a hard time defeating Baruka with only Igris' help" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| One soldier is kept for use, not for fighting | "only good for flying and not fighting" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| The soldiers show loyalty and have rivalries | "He kneels before his master after battles" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| His enemies are rival rulers, each with a kind of its own | "The Monarchs also each govern a different race of monsters" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| What a reviewer found rewarding | "There is a great sense of reward as you get to see Jinwoo level up and the new problems that arise" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| The second anime season's subtitle | "subtitled Arise from the Shadow" | https://en.wikipedia.org/wiki/Solo_Leveling |
+| There is already a game of it | "an action role-playing video game based on the series" | https://en.wikipedia.org/wiki/Solo_Leveling |
+
+Not found on this page, so only Claude's recollection and unverified: whether
+raising a body can fail; where the soldiers are kept and how they are called
+out; how a destroyed soldier returns (Wikipedia says only "immortal"); the look
+of the soldiers; and the word spoken at the raise.
+
 ## 8. Recommendation and GATE 1
 
 GATE 1 was approved by Adam on 2026-11-25 (`DECISIONS.md`). This section is the

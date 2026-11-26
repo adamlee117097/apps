@@ -23,7 +23,7 @@ for the first session there is `MAC_SETUP.md`.
 
 - **Phase 0 research** (`RESEARCH.md`). GATE 1 approved: native Swift, SwiftUI
   around a SpriteKit map.
-- **Design document** (`GDD.md`, draft 2). GATE 2 decided: hybrid campaign,
+- **Design document** (`GDD.md`, draft 3; section 14 awaits review). GATE 2 decided: hybrid campaign,
   eventual App Store release, sprites from Google's image generation, title to
   be workshopped, hit chances in combat.
 - **Rules package** (`NecroRules`): grid and movement with routes, combat with
@@ -93,6 +93,11 @@ part-way.
 
 ## Open questions for Adam
 
+0. **New on 2026-11-26:** the updated brief added seven design principles. The
+   design falls short on three (army size, minion scaling, auto-control) and is
+   thin on two more. The proposed changes and five questions are in `GDD.md`
+   section 14. None is in the code yet.
+
 1. Critical hits were added along with hit chances. Keep them, or misses only?
 2. Rule decisions made while fixing review findings, listed in `DECISIONS.md`
    under 2026-11-26: undo covers only the latest move; Mend and Heal may target
@@ -108,6 +113,10 @@ part-way.
 5. Do you own an Apple Pencil (USB-C), and is the phone on iOS 27.2 or later?
 
 ## Things a future session should know
+
+- The project brief is in `docs/BRIEF.md`. Adam updated it on 2026-11-26 with
+  more reference games (2.5), player feedback (2.6) and design principles
+  (3.5).
 
 - Research was done from a Claude Code cloud environment named
   `necromancer-tactics`. It allows Apple's, Godot's and Unity's sites,

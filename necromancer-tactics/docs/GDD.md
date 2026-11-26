@@ -1,7 +1,8 @@
 # Game Design Document
 
-Working title: Necromancer Tactics. Draft 2, 2026-11-26. GATE 2 decisions are in
-section 13.
+Working title: Necromancer Tactics. Draft 3, 2026-11-26. GATE 2 decisions are in
+section 13. Draft 3 adds the design principles from the updated brief (section
+2.1) and the changes they call for (section 14), which await Adam's review.
 
 Status of what is in here:
 
@@ -36,6 +37,26 @@ is over control of the bodies.
    enemy can reach.
 5. **Playable in two minutes or twenty.** Folded for a quick turn, open for the
    full view, with nothing lost between them.
+
+### 2.1 Design principles (from the brief, non-negotiable)
+
+Added by Adam on 2026-11-26, drawn from player complaints about necromancer
+classes in other games (RESEARCH.md 7.5). Section 14 checks the design against
+each one.
+
+1. **The army is the main source of power.** Most damage and board control come
+   from raised units, not from the overlord's spells.
+2. **It has to feel like an army.** The command cap starts modest and grows
+   large. The Lich King path reaches swarm size.
+3. **Minions scale.** Raised units improve as the overlord progresses. They must
+   not fall off late in the game.
+4. **Raise from real corpses.** Units come only from bodies on the map.
+5. **The overlord must matter to the undead.** Raised units are stronger near
+   the overlord, or need the overlord to raise and empower them.
+6. **No bad minion AI.** The player commands each unit directly. Any
+   auto-control option must be good enough to rely on.
+7. **The world reacts.** Factions, villages and heroes respond to how feared
+   the player is.
 
 ## 3. Battle rules
 
@@ -615,3 +636,126 @@ words are in `DECISIONS.md`.
 | 10 | Consecration lasts until the cleric dies | Yes |
 | 11 | Outer display scrolls | Yes |
 | 12 | Slice line-up | Overlord (cap 5), 2 Skeletons, 1 Bone Archer, 1 Ghoul against 3 Militia, 1 Archer, 1 Knight, 1 Cleric, 1 Pyromancer, on a 16 × 12 map with two starting corpses |
+
+## 14. The design against the principles (proposed, for Adam's review)
+
+What draft 2 already did, what it lacked, and what is proposed. Nothing in this
+section is in the code yet. The vertical slice needs none of it except where
+noted.
+
+| # | Principle | Draft 2 | Verdict |
+|---|---|---|---|
+| 1 | Army is the main source of power | The overlord hits about as hard as a Skeleton and has no damage spells. In the scripted test battles all damage comes from the army | Holds. Made a rule below |
+| 2 | Feels like an army | Caps of 4 to 7 (Death Knight) and 6 to 12 (Lich King) | **Too small.** Twelve units is not a swarm |
+| 3 | Minions scale | Only the Death Knight's raised units gain levels. Lich King units never improve | **Missing** |
+| 4 | Real corpses only | Every unit comes from a body on the map, including the keep's Charnel Pit, which places bodies | Holds |
+| 5 | Overlord matters to the undead | Only the overlord (and Gravespeakers) can raise. Only the Death Knight strengthens nearby units | Passes on the "or", but weakly. After raising, the overlord has little reason to be near the army |
+| 6 | No bad minion AI | Direct command of every unit. No auto-control designed | **Needed** once armies are large |
+| 7 | The world reacts | A currency called Dread, and heroes who arrive in the last act | **Thin.** No system makes the world respond |
+
+### 14.1 Overlord power (principle 1)
+
+Rule for all future balance: at any level, the overlord deals no more damage per
+attack than the player's best ordinary unit of that level. The overlord's
+abilities act on the army (raise, empower, command) and never deal area damage.
+The two promotion abilities in section 7 already fit this.
+
+### 14.2 A larger command cap (principle 2)
+
+Proposed table, replacing the one in 3.5. The slice keeps its cap of 5.
+
+| Overlord level | No path | Death Knight | Lich King |
+|---|---|---|---|
+| 1 | 4 | | |
+| 2 | 5 | | |
+| 3 (path chosen) | | 6 | 8 |
+| 4 | | 6 | 10 |
+| 5 | | 7 | 12 |
+| 6 | | 8 | 14 |
+| 7 | | 9 | 16 |
+| 8 | | 10 | 18 |
+| 9 | | 11 | 20 |
+| 10 | | 12 | 24 |
+
+What this costs:
+
+- **Bigger maps.** Twenty-four undead and their enemies do not fit a 16 × 12
+  field. Late maps need to be around 24 × 18, which means the open display
+  scrolls too. The whole-map view in 12.2 then holds only for early battles.
+- **More enemies**, so that battles produce enough bodies to raise.
+- **Faster turns**, which is 14.5.
+- The Death Knight path stays the smaller, elite army, as agreed, but ends at
+  twelve units instead of seven.
+
+### 14.3 Minions that scale (principle 3)
+
+Proposed, in three layers:
+
+1. **The overlord's level lifts every undead.** For each two overlord levels
+   above the first, every undead the player controls has +2 HP and +1 Might.
+   This applies the moment a unit is raised, so the Lich King's disposable
+   units scale too, and a Skeleton raised at level 9 is not the Skeleton of
+   level 1.
+2. **What it was in life.** A stronger enemy rises as a stronger undead. This is
+   already true by kind (a Knight becomes a Dread Knight); it would extend to
+   level, so late-game enemies leave better bodies. Raised named heroes stay
+   the strongest units, as agreed.
+3. **The keep.** Rooms such as the Black Forge (section 8) give permanent
+   bonuses by type, and each basic undead gets one promotion bought at the
+   keep, for example Skeleton to a veteran form.
+
+The Death Knight path keeps its extra: its raised units also keep skills and
+earn levels of their own.
+
+### 14.4 Dominion: the overlord's presence (principle 5)
+
+Proposed for all paths: undead within 3 tiles of the overlord have +10 to hit
+and +1 Might. The Death Knight's existing bonus to adjacent units becomes a
+stronger version of this. Gravespeakers can raise only while inside the
+overlord's Dominion, so no raising happens without the overlord.
+
+Why: the overlord is the only fail state, so today the safe play is to raise
+and then hide. Dominion pulls the overlord toward the fight and makes that a
+real choice. It is cheap to add to the rules (two numbers in `rules.json`) and
+could go into the slice if Adam wants to feel it there.
+
+### 14.5 Commanding a large army (principle 6)
+
+- Direct command of every unit stays the default.
+- Proposed: **group orders**. Select several undead, or all that have not
+  acted, and give one order: advance on a target, hold, or attack at will. Each
+  unit then acts using the same planner the enemy uses.
+- The bar for "good enough to rely on": that planner already drives the
+  player's army in the test battles, where it wins 162 of 200 with a simple
+  overlord script. Before group orders ship, the same test must hold on a
+  swarm-sized battle, and units under a group order must never take an action
+  the forecast shows as a likely death without the player choosing it.
+- The interface must also cope: the unit list, the "next unit" buttons and the
+  command-cap display in section 12 were drawn for five units.
+
+### 14.6 A world that reacts (principle 7)
+
+Proposed: a **Notoriety** score for the campaign, rising with territory taken,
+battles won and heroes raised.
+
+- **Villages** respond by level: at low Notoriety they resist with militia; in
+  the middle they pay tribute or flee, which changes what bodies a region
+  offers; at high Notoriety some surrender and others call for help.
+- **The enemy adapts.** Higher Notoriety brings more clerics, pyromancers and
+  paladins in ordinary parties, then holy orders, then the named heroes of the
+  Reckoning act. Conquest draws stronger heroes.
+- **Factions** remember: sparing or raising a faction's dead changes how its
+  remaining forces fight the player.
+
+This is campaign design for later phases. The slice does not need it.
+
+### 14.7 Questions for Adam
+
+1. Are the larger caps in 14.2 right, knowing they bring bigger maps that
+   scroll on the open display as well?
+2. Is the scaling rule in 14.3 the kind you want, with the overlord's level
+   lifting every undead?
+3. Dominion (14.4): add it, and should it be in the vertical slice?
+4. Group orders (14.5): is that what you mean by an auto-control option?
+5. Notoriety (14.6): is this the direction, for when the campaign is designed?
+

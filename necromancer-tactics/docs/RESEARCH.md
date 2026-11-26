@@ -794,6 +794,39 @@ touch grid controls. Final Fantasy Tactics uses an isometric map with height.
 7. **Flat top-down grid**, not isometric, for tap accuracy.
 8. **Never rely on colour alone** for side, undead type or tile state.
 
+### 7.4 Necromancy-specific references (added 2026-11-26)
+
+Adam's updated brief names three more games. Their own sites (Steam, Square
+Enix, Crate Entertainment) are blocked from this session, so, as in 7.1, these
+findings come from search-result excerpts and are not machine-checked.
+
+| Game | Finding | Source quality |
+|---|---|---|
+| The Necromancer's Tale (Psychic Software) | Released on Steam on 17 July 2025; console versions followed in June 2026. Story-led role-playing game with tactical turn-based combat that includes undead minions, and an option to resolve fights automatically. | Excerpts of press coverage and a press release. The Steam page named in the brief could not be opened |
+| | A Trust system tracks how the townsfolk see the player and makes choices carry consequences. The brief adds that low trust can lead to a trial or a mob; that detail was not found in the excerpts. | Excerpts of press coverage; the last point is from the brief only |
+| Tactics Ogre: Reborn | A defeated undead unit is not dead: it lies still for three turns and then gets up again at full health. It is destroyed for good only by an exorcism cast while it is down. Living units instead get a countdown during which they can be revived. | Excerpts of a guide site and news coverage; no official source opened |
+| | This is the closest precedent for this game's corpse rules: a body on the field that will come back unless the enemy spends an action on it. Here the roles are reversed, since the player owns the undead and the enemy does the exorcising. | Inference |
+| | Whether enemy necromancers interact with that system was not found. | Not found |
+| Grim Dawn | The necromancer's skeleton summon limit grows with skill level and with equipment; player reports give totals of around ten to twelve. | Excerpts of a fan wiki and forum posts, which disagree on exact numbers |
+
+### 7.5 What players say about necromancer classes (from the brief)
+
+The brief summarises a Reddit thread (r/rpg_gamers, "Games that do necromancy the
+best for gameplay?"). Adam describes it as one player's opinion, not data. Claude
+has not read the thread: Reddit is not reachable from this session and no link
+was given. The summary below is Adam's, recorded here because the design
+principles in GDD section 2 rest on it.
+
+- Praised: Grim Dawn (a large summon limit, minions strong enough to fight
+  bosses), Last Epoch (a skill tree that strengthens minions, though they weaken
+  late in the game), and Skyrim's detail of reviving real corpses.
+- Criticised: Path of Exile (weak minions with poor AI), Divinity: Original Sin
+  2 (one summon, then ordinary play), Guild Wars 2 (too few slots), Pathfinder:
+  Wrath of the Righteous (skeletons that scale poorly), and Tactics Ogre (undead
+  that are strong without a necromancer, so the necromancer feels like a tool).
+- The overall complaint: necromancer classes do not scale, and the player is
+  handed damage spells instead of an army that is the main source of power.
+
 ## 8. Recommendation and GATE 1
 
 GATE 1 was approved by Adam on 2026-11-25 (`DECISIONS.md`). This section is the

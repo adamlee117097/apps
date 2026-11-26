@@ -184,6 +184,22 @@ Adam reset the usage limits, and three independent reviewers read
 - **Pinch in the simulator** is possible with a trackpad, not with a mouse. The
   folded view keeps both the pinch and an Overview button.
 
+## 2026-11-26: Updated brief
+
+Adam sent a new version of the brief. It adds three necromancy reference games,
+a summary of player feedback, and seven design principles marked
+non-negotiable. The brief is now kept in the repository as `docs/BRIEF.md`.
+
+- The project was not restarted. The additions were applied to the existing
+  work: RESEARCH.md 7.4 and 7.5, and GDD.md 2.1 and 14.
+- The design was checked against each principle (GDD.md 14). It holds on two,
+  passes weakly on one, and falls short on four: command caps too small for an
+  army, no scaling for most raised units, no auto-control for large armies, and
+  no system by which the world reacts.
+- Changes are proposed, not made: larger caps, overlord-level scaling for all
+  undead, a Dominion aura around the overlord, group orders, and a Notoriety
+  score. **They await Adam's review.** No code was changed.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |

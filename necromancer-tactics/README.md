@@ -9,6 +9,7 @@ the bodies on the field. Original world, characters and lore.
 | Path | Contents |
 |---|---|
 | `docs/STATUS.md` | Current phase, what is done, what is next, open questions. Read this first. |
+| `docs/BRIEF.md` | The project brief, as last updated by Adam. |
 | `docs/DECISIONS.md` | Log of gate decisions with dates and reasons. |
 | `docs/RESEARCH.md` | Phase 0 research with sources. |
 | `docs/GDD.md` | Game design document. |

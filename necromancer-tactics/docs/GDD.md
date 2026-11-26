@@ -161,7 +161,7 @@ every unit's Crit to 0 in `units.json` removes them.
 
 | Threat | Rule (proposed details) | Player counterplay |
 |---|---|---|
-| **Consecration** | A cleric's Consecrate action blesses a target tile of open ground within range 2 and the four tiles next to it (walls and water are skipped). Corpses there cannot be raised. The blessing lasts **until that cleric dies**. Each cleric keeps at most two blessed areas; a third replaces the oldest | Kill the cleric. Later: units with Defile remove a blessing |
+| **Consecration** | A cleric's Consecrate action blesses a target tile of open ground within range 2 and the four tiles next to it (walls and water are skipped). Corpses there cannot be raised. The blessing lasts **until that cleric dies**. Each cleric keeps at most two blessed areas. A third replaces one of them: an area with no body on it goes first, otherwise the oldest (proposed 2026-11-26) | Kill the cleric. Later: units with Defile remove a blessing |
 | **Corpse burning** | Pyromancers (range 2) and paladins (adjacent) can spend their action to destroy every corpse on one tile. Those units are gone for good | Guard piles, raise quickly, kill or body-block the burner, avoid stacking deaths on one tile |
 | **Holy damage** | A unit killed by a Holy-type attack leaves no corpse | Keep valued units out of Holy reach when low; use type advantage against Holy units |
 | **Overlord is the fail state** | Overlord at 0 HP ends the battle in defeat | Positioning. The overlord must still get close enough to raise |
@@ -393,36 +393,62 @@ value: what success is worth times its chance, minus the expected cost of the
 enemy's reply. The weights are data (`rules.json`, under `ai`), so behaviour is
 tuned without code changes. What the weights are set to produce:
 
-1. **Kill the overlord if the phase can.** When the enemies still to act could
-   bring the overlord to zero between them, every one that can reach it attacks,
-   whatever the reply costs them.
-2. **Clerics** consecrate the bodies a raiser could reach next phase, choosing
+1. **Kill the overlord if the phase can.** The AI estimates the chance that the
+   enemies still to act bring the overlord to zero this phase, giving each
+   attacker a tile of its own and counting hit chances. At 35% or more, every
+   one that can reach the overlord attacks, whatever the reply costs them.
+2. **Fire first, then blessings.** Pyromancers and paladins act before the
+   rest of their side. They burn the most valuable pile in reach, more readily
+   if a raiser could get to it. They leave blessed ground alone while any body
+   lies open elsewhere.
+3. **Clerics** consecrate the bodies a raiser could reach next phase, choosing
    the spot that covers the most value. Bodies no raiser can reach count for a
    quarter. A cleric at its two-area limit counts what a new blessing would
    uncover, so it does not cycle. It heals a badly hurt ally when no reachable
    body is worth more.
-3. **Pyromancers and paladins** burn the most valuable pile in reach, more
-   readily if a raiser could get to it and less if it is already on consecrated
-   ground.
-4. Everyone else attacks where the expected trade is best. Type advantage,
-   kills and raisers score higher. A unit that can land a hit attacks rather
-   than waits, unless the reply would probably kill it.
-5. Holy units prefer kills, since those leave no corpse.
-6. A badly hurt unit with nothing useful to do falls back toward a healer.
-   Units with nothing in reach walk toward their goal by the shortest route
-   round walls. Clerics and fire users with no bodies to deny stay with the
-   fighters.
+4. **Clerics and fire users keep out of reach.** While they have fighters to
+   stand behind, they count what ending on a tile is likely to cost them in the
+   player's next phase, and do their work from a safe tile when one serves.
+   With no fighters left, or no way out of reach, they fight.
+5. Everyone else attacks where the expected trade is best. Type advantage,
+   kills and raisers score higher. Holy units prefer kills, since those leave
+   no corpse.
+6. **No unit ends its turn idle with a target in range.** A unit whose every
+   attack is a poor trade takes the best of them. The exception is a badly
+   hurt unit with a healer to fall back to, and it too strikes if a foe is in
+   range where it ends up.
+7. Units with nothing in reach walk toward their goal by the shortest route,
+   round walls and round other units. Among equal choices a unit takes the one
+   needing the fewest steps, so it does not shuffle before acting.
 
 Not built: avoiding a death that would leave a corpse within the overlord's
 Raise Range.
 
-Measured on the slice map over 200 seeded battles against a competent scripted
-player (the overlord walks to bodies and raises them; other units use the same
-planning as the enemy): 162 player wins, 34 losses, 4 unfinished after 80
-turns; 1,319 raises, 183 consecrations and 122 corpse burnings. Against a
-player that never seeks out bodies: 2 wins, 198 losses. Raising decides the
-battle, which is the intent. These are scripted players, not people; balance
-still needs a human.
+An independent review of the AI on 2026-11-26 found eight problems, among them
+wounded enemies that stood beside a target without attacking, units stuck
+behind their own allies, and a cleric and pyromancer that died before they
+could deny anything. Each was reproduced as a failing test and then fixed.
+
+Measured on the slice map over 1,000 seeded battles against a scripted player
+(the overlord walks to bodies and raises them; other units use the same
+planning as the enemy):
+
+| | Before the fixes (reviewer's figures) | After |
+|---|---|---|
+| Player wins | 810 | 597 |
+| Player losses | 181 | 394 |
+| Unfinished after 80 turns | 9 | 9 |
+| Battles in which the pyromancer burned a body | 275 | 505 |
+| Battles in which the cleric consecrated | 657 | 607 |
+| Enemy turns spent waiting with a target in range | 1,959 | 0 |
+
+The enemy is harder than it was, mostly because the pyromancer now lives to
+burn bodies. All nine unfinished battles are the scripted player's overlord,
+left alone, walking away from the enemy for ever; a person would not play that
+way, and the enemy cannot yet corner a unit as fast as itself. An earlier
+figure, 2 wins in 200 for a player that never raises, was measured before these
+changes and has not been re-run. These are scripted players, not people;
+whether three wins in five is the right difficulty needs a human.
 
 The player can see what the AI is going for: a toggle shows enemy threat range,
 and corpse piles an enemy can burn or consecrate next phase are marked. The
@@ -735,7 +761,7 @@ What this costs:
 ### 14.3 Minions that scale (principle 3)
 
 Section 15.2 proposes a fourth layer, ranks earned by each unit, and a firmer
-version of layer 2. If Adam accepts it, 15.3 says what changes here.
+version of layer 2. If Adam accepts it, 15.4 says what changes here.
 
 Proposed, in three layers:
 
@@ -774,8 +800,8 @@ could go into the slice if Adam wants to feel it there.
   acted, and give one order: advance on a target, hold, or attack at will. Each
   unit then acts using the same planner the enemy uses.
 - The bar for "good enough to rely on": that planner already drives the
-  player's army in the test battles, where it wins 162 of 200 with a simple
-  overlord script. Before group orders ship, the same test must hold on a
+  player's army in the test battles, where it wins 597 of 1,000 with a simple
+  overlord script (section 10). Before group orders ship, the same test must hold on a
   swarm-sized battle, and units under a group order must never take an action
   the forecast shows as a likely death without the player choosing it.
 - The interface must also cope: the unit list, the "next unit" buttons and the
@@ -811,10 +837,10 @@ This is campaign design for later phases. The slice does not need it.
 
 ## 15. Ideas drawn from Adam's references (proposed)
 
-On 2026-11-26 Adam shared three references: a painted armoured dark lord, the
-anime *Overlord*, and *Solo Leveling*, with the instruction to draw inspiration
-from them and to read about the two series on Wikipedia. All three are other
-people's work. This game takes **ideas and mood only**: no names, characters,
+On 2026-11-26 Adam shared four references: a painted armoured dark lord, the
+anime *Overlord*, *Solo Leveling*, and the App Store page of the game *Undead
+Horde*. He asked that the game draw inspiration from the series and that Claude
+read about them on Wikipedia. All four are other people's work. This game takes **ideas and mood only**: no names, characters,
 places, plot, dialogue, terms or designs.
 
 Sourcing: what Wikipedia says about each series is in `RESEARCH.md` 7.6, with
@@ -874,7 +900,26 @@ session. Nothing in this section is in the code.
   behind.
 - The rank names are to be our own. The series' ladder is not used.
 
-### 15.3 What this changes in section 14
+### 15.3 From *Undead Horde*
+
+Adam sent this game's App Store page on 2026-11-26. It is a real-time action
+game by another studio in which a necromancer raises slain enemies into a large
+army. What the page says is in `RESEARCH.md` 7.7, with quotations checked by
+script. **D** marks the developer's own description or release notes and **R**
+marks a single player's review. Claude has not played it.
+
+| What the game does | Source | In this game | Status |
+|---|---|---|---|
+| Nearly every enemy can be raised | D | Already true: every living unit in section 5.2 has a raised form. Made a rule for new content: no enemy is added without one, bosses and beasts included | Rule for content |
+| The army numbers in the dozens, and its size is what players praise | D, R | Supports the larger caps in 14.2. In a turn-based game nobody will order two dozen units one by one every turn, so group orders (14.5) become necessary for the Lich King path, not optional | Strengthens 14.2 and 14.5 |
+| One player built for the biggest army and saw a strong lone necromancer as the other way to play | R | The two paths already are this choice. Idea: at some overlord levels the player picks between one more command slot and a point of the overlord's own strength, so the choice continues inside a path | Idea only. It would touch the tables in 14.1 and 14.2 |
+| A large army jams at narrow places, and the developer widened bridges because of it | R, D | Map rule: any route the whole army must take is at least two tiles wide, unless the chokepoint is the point of the map. The planner behind group orders must walk units round each other; a review of our own AI found a case where it does not (`DECISIONS.md`, 2026-11-26) | Map-design rule; AI fix |
+| Units placed on the map can get stuck | R | A raised unit stands up on the nearest free tile. That tile must be one it can walk out of | To be tested in the rules |
+| The necromancer is equipped with items | D | Not in this design, and not proposed. The overlord grows by level, path and keep | Question for Adam |
+| Progress carries into a new game | R | A possible replay mode for the hybrid campaign | Later |
+| Sold for a fixed price, collecting no data | D, Apple's listing | One model for the eventual App Store release. The price model has not been discussed | Question for Adam, not urgent |
+
+### 15.4 What this changes in section 14
 
 - **14.3 (minions scale)** gains a fourth layer, ranks, and its second layer
   becomes "starting rank follows what the body was". The keep's single
@@ -884,7 +929,7 @@ session. Nothing in this section is in the code.
   sources of events: last requests and lieutenant initiative.
 - **14.1, 14.2, 14.4 and 14.5** are unchanged.
 
-### 15.4 Look, as mood only
+### 15.5 Look, as mood only
 
 Art notes are in `ART_PIPELINE.md` section 6.
 
@@ -897,7 +942,7 @@ Art notes are in `ART_PIPELINE.md` section 6.
   (U for the series; the idea stands on its own). The colour could differ by
   path.
 
-### 15.5 Cautions
+### 15.6 Cautions
 
 - **The title.** Two of the references are titled *Overlord*, and Wikipedia
   records a turn-based game for iOS released under that series' name in 2024
@@ -908,10 +953,12 @@ Art notes are in `ART_PIPELINE.md` section 6.
   signature terms of *Solo Leveling*: "Monarch", "shadow soldier", "the System",
   and "Arise" as the word of command. The game's own terms (overlord, Dread,
   Dominion, Gravespeaker) are unaffected.
+- **The title, again.** A necromancer game called *Undead Horde* is already on
+  the App Store. The title should avoid "Horde" as well.
 - **Tone.** *Overlord* includes comedy built on its particular characters. That
   is theirs. Whether this game has humour at all is Adam's call.
 
-### 15.6 Questions for Adam
+### 15.7 Questions for Adam
 
 1. Lieutenants posted to parts of the keep, and to vassal villages: yes?
 2. Fear and Fealty as two separate reactions from the world: yes, or keep one
@@ -923,3 +970,8 @@ Art notes are in `ART_PIPELINE.md` section 6.
 6. Last requests, with a real choice between honouring and raising: yes?
 7. Lieutenant initiative between battles: wanted, or too much?
 8. A rival undead lord as a late enemy: a stretch goal, or no?
+9. Items for the overlord (weapons, trinkets), as *Undead Horde* has: wanted,
+   or keep growth to level, path and keep?
+10. Inside a path, should some level-ups offer a choice between a bigger army
+    and a stronger overlord?
+11. Not urgent: when it reaches the App Store, is this a pay-once game?

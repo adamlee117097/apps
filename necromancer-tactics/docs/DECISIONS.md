@@ -244,6 +244,42 @@ them on wiki pedia".
   raised units. Ranks give no Might, so Adam's decision on the overlord's
   strength is unaffected. No code was changed.
 
+## 2026-11-26: A fourth reference, Undead Horde
+
+Adam sent the App Store page of *Undead Horde*, a real-time necromancer game by
+another studio. `apps.apple.com` was added to the allowed hosts, with his
+approval, to read it. Findings are in `RESEARCH.md` 7.7 (14 quotations checked
+by script) and what the design takes from them is in GDD 15.3: every enemy must
+have a raised form; large armies make group orders necessary; routes for the
+whole army are at least two tiles wide. Nothing was decided. Three questions
+were added to GDD 15.7.
+
+## 2026-11-26: Enemy AI review, and one rule changed
+
+The review agent for the enemy AI, started earlier in the day and cut off by
+the usage limit, finished after the limit was reset. It reported eight
+problems. Claude reproduced nine failing tests from them and fixed each. No
+second agent checked the findings; the tests are the check.
+
+- **AI changes** (GDD section 10): a unit never ends its turn idle with a
+  target in range; units walk round their own allies; the cleric and the
+  pyromancer weigh the danger of the tile they end on; fire users act before
+  clerics and do not burn blessed ground while a body lies open; the group
+  attack on the overlord is called from an estimated chance of 35% or more, not
+  from summed damage; a unit already in position does not move before acting.
+- **Rule changed, awaiting Adam's confirmation:** a cleric holds two blessed
+  areas. When it casts a third, an area with no body on it now lapses first;
+  before, the oldest always did. Without this a cleric could be stuck holding a
+  blessing on empty ground. To restore the old rule, change
+  `areasThatWouldLapse` in `Engine.swift`.
+- **Effect on difficulty:** against the scripted test player the slice went
+  from 810 wins in 1,000 to 597. The enemy's pyromancer now burns a body in
+  about half of all battles, up from about a quarter.
+- New data in `rules.json`: `overlordAssaultMinChance`, `exposureDamage`,
+  `exposureDeath`.
+- Tests: 124, up from 112. A measuring run is built into the tests
+  (`NECRO_SWEEP=1000 swift test --filter BattlesEndTests`).
+
 ## Gates
 
 | Gate | Status | Date | Outcome |

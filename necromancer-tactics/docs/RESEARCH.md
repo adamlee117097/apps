@@ -899,6 +899,48 @@ raising a body can fail; where the soldiers are kept and how they are called
 out; how a destroyed soldier returns (Wikipedia says only "immortal"); the look
 of the soldiers; and the word spoken at the raise.
 
+### 7.7 Undead Horde, an existing necromancer game on the App Store (added 2026-11-26)
+
+Adam sent the game's App Store page: https://apps.apple.com/us/app/undead-horde/id1388267373
+
+The description is the developer's own (10tons Ltd), so it is a primary source
+for what the game claims to be. The player reviews on the page are individual
+opinions. Claude has not played the game. Quotations were checked by script
+against the page as fetched on 2026-11-26.
+
+| Finding | The page's words | Kind |
+|---|---|---|
+| It is an action game, played in real time, not a turn-based one | "Undead Horde is a necromantic action game with elements from action RPG, strategy and hack'n'slash" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Developer |
+| The army is made from the enemies the player kills | "Re-animate your slain enemies and make them part of your undead army" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Developer |
+| Nearly every enemy can be raised, and the army is large | "Re-animate almost any enemy and build an army of dozens of undead minions" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Developer |
+| The necromancer levels up and is equipped with items | "Equip your necromancer with endless amounts of loot" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Developer |
+| A player built for the largest army the game allows | "I went for a command build to have as many units as possible" (https://apps.apple.com/us/app/undead-horde/id1388267373) | One review |
+| The same player saw a strong lone necromancer as the other way to play | "I bet a juggernaut build where you solo with health and damage upgrades" (https://apps.apple.com/us/app/undead-horde/id1388267373) | One review |
+| The size of the army is what players praise | "My largest army tested the limits of my brand new iPad" (https://apps.apple.com/us/app/undead-horde/id1388267373) | One review |
+| A large army jams at narrow places | "blocks all my units from crossing the bridge" (https://apps.apple.com/us/app/undead-horde/id1388267373) | One review |
+| The developer changed maps for that reason | "Made bridges wider for better AI navigation" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Developer's release notes |
+| Units placed on the map can get stuck | "Spawning units get trapped in houses" (https://apps.apple.com/us/app/undead-horde/id1388267373) | One review |
+| Progress carries into a new game | "restarting the game but keeping your XP" (https://apps.apple.com/us/app/undead-horde/id1388267373) | One review |
+| It collects no data | "The developer does not collect any data from this app" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Developer's privacy label |
+| Its age rating is the one expected for this game | "Age Rating 13+" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Apple's listing |
+| It was released in 2019 | "Copyright © 2019 10tons Ltd" (https://apps.apple.com/us/app/undead-horde/id1388267373) | Apple's listing |
+
+Also on the page: the price is $5.99, the category is Roleplaying, the size is
+293 MB, and there are 188 ratings. The text of the page as fetched does not
+mention in-app purchases. The star average was not in the text Claude could
+read.
+
+What this means for the project (inference):
+
+- A paid necromancer game with a large raised army exists on the App Store and
+  is rated 13+. That supports the age rating expected in `ART_PIPELINE.md`
+  section 4, and shows one working sales model: pay once, no data collected.
+- It is not a direct competitor in kind. It is real-time action; this game is
+  turn-based on a grid. No turn-based game with this premise was looked for in
+  this session, so whether one exists is not known.
+- The title of this game should stay clear of "Undead Horde" and of "Horde".
+- What the game does with these findings is in GDD section 15.
+
 ## 8. Recommendation and GATE 1
 
 GATE 1 was approved by Adam on 2026-11-25 (`DECISIONS.md`). This section is the

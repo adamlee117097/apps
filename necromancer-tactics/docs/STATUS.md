@@ -32,12 +32,13 @@ for the first session there is `MAC_SETUP.md`.
   burning, holy kills, overlord defeat, rout victory, undo of the latest move,
   versioned and validated saves, and queries the interface will need (threat
   tiles, corpses at risk, attack and heal targets, forecast).
-- **Enemy AI** that consecrates and burns bodies a raiser could reach, attacks
-  the overlord together when it can fall, heals, retreats, and paths round
-  walls. It can be stepped one unit at a time for animation.
+- **Enemy AI** that consecrates and burns bodies a raiser could reach, keeps
+  its cleric and pyromancer out of reach while they work, attacks the overlord
+  together when the odds are good enough, heals, retreats, and paths round
+  walls and other units. It can be stepped one unit at a time for animation.
 - **Data files**: 20 units, rule constants, type chart, AI weights, and the
   16 × 12 slice map.
-- **112 tests**, passing locally. GitHub Actions runs them on every push.
+- **124 tests**, passing locally. GitHub Actions runs them on every push.
 - **Mac plan** (`MAC_SETUP.md`): what to install, what Adam must do in person
   and in what order, how Claude Code drives Xcode, what a free account allows,
   what the simulator cannot show, and the first task (a fold prototype).
@@ -48,7 +49,7 @@ for the first session there is `MAC_SETUP.md`.
   terms, watermarking, Apple's rules, and a proposed pipeline. Nothing has been
   generated.
 - **Citation checker** (`tools/citations`): every quotation in `RESEARCH.md`
-  (156), `MAC_SETUP.md` (91) and `ART_PIPELINE.md` (56) is checked against its
+  (170), `MAC_SETUP.md` (91) and `ART_PIPELINE.md` (56) is checked against its
   source page by script.
 
 ## Review of 2026-11-26: what ran and what did not
@@ -62,7 +63,7 @@ part-way.
 | Citation audit of `RESEARCH.md`, five auditors | Completed. 69 problems found, all addressed |
 | Code review: design conformance | Completed. Findings fixed |
 | Code review: engine edge cases and saves | Completed. Findings fixed |
-| Code review: enemy AI | Agent did not run. The other two reviewers covered much of it; Claude fixed what they found and measured 200 seeded battles |
+| Code review: enemy AI | The agent finished late, after the limit was reset, and reported eight problems. Claude reproduced each as a failing test and fixed it (GDD section 10). Its findings were not checked by a second agent |
 | Code review: public API | Agent did not run. Claude compiled and ran a client that uses only the public API |
 | Code review: mutation testing | Agent did not run. Claude scripted it: of 53 deliberate code changes the tests caught 38 and missed 15. Tests were added; a rerun caught 14 of the 15. The last was a redundant check, now removed |
 | Second-agent verification of the code findings | Did not run. Claude reproduced each bug with a test before fixing it |
@@ -78,9 +79,13 @@ part-way.
 - The AI does not avoid deaths that would leave a body within the overlord's
   reach (GDD section 10).
 - An open, flat, portrait layout is not designed (GDD 12.1).
-- Balance. The numbers are first-pass. Against a competent scripted player the
-  slice gives 162 wins and 34 losses in 200 battles, which may be too easy;
-  only a person playing can say.
+- Balance. The numbers are first-pass. Against a scripted player the slice now
+  gives 597 wins and 394 losses in 1,000 battles (it was 810 and 181 before
+  the AI fixes of 2026-11-26); only a person playing can say whether that is
+  right.
+- The enemy cannot corner a unit as fast as itself. In 9 of 1,000 test battles
+  the scripted player's lone overlord walks away for 80 turns. A turn limit or
+  a smarter pursuit would end those.
 
 ## Next
 
@@ -100,14 +105,16 @@ part-way.
    Section 15 adds ideas from three references Adam shared (a painted dark
    lord, *Overlord* and *Solo Leveling*): lieutenants, vassal villages, ranks
    for undead that survive being raised again, naming raised heroes, last
-   requests, and a look for each path. It ends with eight questions. What
-   Wikipedia says about the two series is in `RESEARCH.md` 7.6.
+   requests, and a look for each path. A fourth reference, the App Store page
+   of *Undead Horde*, added map and army-size lessons. The section ends with
+   eleven questions. What the sources say is in `RESEARCH.md` 7.6 and 7.7.
 
 1. Critical hits were added along with hit chances. Keep them, or misses only?
 2. Rule decisions made while fixing review findings, listed in `DECISIONS.md`
    under 2026-11-26: undo covers only the latest move; Mend and Heal may target
-   the overlord; Dismiss is player-only; ability ranges mean "up to". Confirm
-   or change.
+   the overlord; Dismiss is player-only; ability ranges mean "up to"; when a
+   cleric casts a third blessing, an area with no body on it lapses before an
+   older one that holds bodies. Confirm or change.
 3. Which Google image generation product and model did the Gravewright project
    use, and is that account on paid billing? That project's memory is on Adam's
    own computer and is not readable from a cloud session. The API key must
@@ -127,7 +134,8 @@ part-way.
   `necromancer-tactics`. It allows Apple's, Godot's and Unity's sites,
   `download.swift.org`, Google's developer documentation
   (`aistudio.google.com`, where `ai.google.dev` now redirects), and
-  `en.wikipedia.org` (added 2026-11-26 at Adam's request). Other sites
+  `en.wikipedia.org` and `apps.apple.com` (both added 2026-11-26 for
+  references Adam sent). Other sites
   (Nintendo, App Store listings, game press, `github.com` pages) are blocked
   there.
 - Apple's documentation pages can be read as JSON at

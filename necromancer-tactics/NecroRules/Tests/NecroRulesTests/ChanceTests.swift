@@ -7,6 +7,7 @@ import Testing
         try Fixture(rows: rows, certainHits: false, seed: seed, units: [
             P(unit: attacker, side: .player, x: 1, y: 1), P(unit: defender, side: .enemy, x: 2, y: 1),
             P(unit: "militia", side: .enemy, x: 7, y: 4),
+            P(unit: "overlord", side: .player, x: 0, y: 4),
         ])
     }
 
@@ -17,14 +18,14 @@ import Testing
         // Skeleton: hit 85. Knight: avoid 0. Bone is at a disadvantage against Steel: -15.
         f = try duel("skeleton", "knight")
         #expect(f.engine.forecast(attacker: f.unit("skeleton"), defender: f.unit("knight", .enemy), in: f.state).strike.hitChance == 70)
-        // Overlord: hit 90. Militia: avoid 5. Neutral.
-        f = try duel("overlord", "militia")
-        #expect(f.engine.forecast(attacker: f.unit("overlord"), defender: f.unit("militia", .enemy), in: f.state).strike.hitChance == 85)
+        f = try duel("gravespeaker", "militia")
+        // Gravespeaker: hit 85. Militia: avoid 5. Neutral.
+        #expect(f.engine.forecast(attacker: f.unit("gravespeaker"), defender: f.unit("militia", .enemy), in: f.state).strike.hitChance == 80)
     }
 
     @Test func roughGroundMakesTheDefenderHarderToHit() throws {
-        let f = try duel("overlord", "militia", rows: ["........", "..f.....", "........", "........", "........"])
-        #expect(f.engine.forecast(attacker: f.unit("overlord"), defender: f.unit("militia", .enemy), in: f.state).strike.hitChance == 75)
+        let f = try duel("gravespeaker", "militia", rows: ["........", "..f.....", "........", "........", "........"])
+        #expect(f.engine.forecast(attacker: f.unit("gravespeaker"), defender: f.unit("militia", .enemy), in: f.state).strike.hitChance == 70)
     }
 
     @Test func chancesStayBetweenZeroAndOneHundred() throws {
@@ -107,7 +108,7 @@ import Testing
     @Test func reloadingASaveDoesNotChangeTheNextRoll() throws {
         var original = try duel("ghoul", "knight", seed: 7)
         var reloaded = original
-        reloaded.state = try GameState.load(original.state.saved())
+        reloaded.state = try GameState.load(original.state.saved(), data: original.data)
         let a = try original.apply(.attack(unit: original.id("ghoul"), target: original.id("knight", .enemy)))
         let b = try reloaded.apply(.attack(unit: reloaded.id("ghoul"), target: reloaded.id("knight", .enemy)))
         #expect(a == b)

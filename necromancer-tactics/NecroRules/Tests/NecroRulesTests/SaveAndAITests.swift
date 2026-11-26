@@ -56,7 +56,7 @@ func playSlice(turns: Int, seed: UInt64 = 1) throws -> GameState {
         // The state after three turns has moved units, damage, and usually corpses.
         #expect(state.turn == 4 || state.outcome != .ongoing)
         let bytes = try state.saved()
-        let loaded = try GameState.load(bytes)
+        let loaded = try GameState.load(bytes, data: GameData.bundled())
         #expect(loaded == state)
         #expect(try loaded.saved() == bytes)
     }
@@ -66,7 +66,7 @@ func playSlice(turns: Int, seed: UInt64 = 1) throws -> GameState {
         let engine = Engine(data: data)
         let ai = EnemyAI(engine: engine)
         var original = try playSlice(turns: 2)
-        var loaded = try GameState.load(original.saved())
+        var loaded = try GameState.load(original.saved(), data: data)
         for _ in 0..<3 where original.outcome == .ongoing {
             try playScriptedPlayerPhase(engine, &original)
             try ai.runPhase(&original)
@@ -77,9 +77,10 @@ func playSlice(turns: Int, seed: UInt64 = 1) throws -> GameState {
     }
 
     @Test func saveCanHappenMidPhase() throws {
-        var f = try Fixture(units: [P(unit: "skeleton", side: .player, x: 0, y: 0), P(unit: "militia", side: .enemy, x: 7, y: 4)])
+        var f = try Fixture(units: [P(unit: "skeleton", side: .player, x: 0, y: 0), P(unit: "militia", side: .enemy, x: 7, y: 4),
+                                    P(unit: "overlord", side: .player, x: 0, y: 4)])
         try f.apply(.move(unit: f.id("skeleton"), to: Position(2, 0)))
-        var loaded = try GameState.load(f.state.saved())
+        var loaded = try GameState.load(f.state.saved(), data: f.data)
         // The half-finished move, including the ability to undo it, survives the save.
         try f.engine.apply(.undoMove(unit: f.id("skeleton")), to: &loaded)
         #expect(loaded.unit(id: f.id("skeleton"))?.position == Position(0, 0))

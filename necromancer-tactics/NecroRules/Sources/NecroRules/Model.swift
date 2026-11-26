@@ -79,7 +79,11 @@ public struct BattleUnit: Codable, Equatable, Sendable, Identifiable {
 /// A body on a tile. `definitionID` is what the unit was when it died.
 public struct Corpse: Codable, Equatable, Sendable, Identifiable {
     public let id: Int
+    /// The id the unit had while it stood. A unit raised from this body gets the same id back.
+    public var unitID: Int
     public var definitionID: String
+    /// The side the unit fought for when it fell.
+    public var side: Side
     public var position: Position
 }
 
@@ -91,27 +95,28 @@ public struct Consecration: Codable, Equatable, Sendable {
 }
 
 /// The complete state of a battle. Encoding this value is a save game.
+/// Code outside the package can read everything but can only change a battle through `Engine.apply`.
 public struct GameState: Codable, Equatable, Sendable {
-    public var mapID: String
-    public var width: Int
-    public var height: Int
+    public internal(set) var mapID: String
+    public internal(set) var width: Int
+    public internal(set) var height: Int
     /// Row-major, `width * height` entries.
-    public var terrain: [Terrain]
+    public internal(set) var terrain: [Terrain]
     /// Living units only, in ascending id order.
-    public var units: [BattleUnit]
-    public var corpses: [Corpse]
-    public var consecrations: [Consecration]
-    public var phase: Side
-    public var turn: Int
-    public var commandCap: Int
-    public var outcome: Outcome
-    public var dismissUsedThisPhase: Bool
-    public var nextUnitID: Int
-    public var nextCorpseID: Int
-    public var nextSequence: Int
+    public internal(set) var units: [BattleUnit]
+    public internal(set) var corpses: [Corpse]
+    public internal(set) var consecrations: [Consecration]
+    public internal(set) var phase: Side
+    public internal(set) var turn: Int
+    public internal(set) var commandCap: Int
+    public internal(set) var outcome: Outcome
+    public internal(set) var dismissUsedThisPhase: Bool
+    public internal(set) var nextUnitID: Int
+    public internal(set) var nextCorpseID: Int
+    public internal(set) var nextSequence: Int
     /// State of the battle's random number generator. Saved with everything else, so a
     /// reloaded battle rolls exactly what the original would have.
-    public var rngState: UInt64
+    public internal(set) var rngState: UInt64
 
     /// A number from 0 to 99, advancing the generator (SplitMix64).
     mutating func rollPercent() -> Int {

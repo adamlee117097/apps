@@ -9,7 +9,9 @@ let package = Package(
     targets: [
         .target(
             name: "NecroRules",
-            resources: [.copy("Resources")]
+            // Not named "Resources": Foundation reads a folder of that name as a bundle layout marker, and it is
+            // reported (not yet confirmed on a Mac) to make code signing reject the bundle on Apple platforms.
+            resources: [.copy("Data")]
         ),
         .testTarget(
             name: "NecroRulesTests",

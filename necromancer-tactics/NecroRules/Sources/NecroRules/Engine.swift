@@ -3,6 +3,7 @@ import Foundation
 /// Something a player or the enemy AI can ask the rules to do.
 public enum Action: Equatable, Sendable {
     case move(unit: Int, to: Position)
+    /// Takes back the most recent move, as long as nothing else has happened since.
     case undoMove(unit: Int)
     case attack(unit: Int, target: Int)
     case raise(unit: Int, corpse: Int)
@@ -17,14 +18,17 @@ public enum Action: Equatable, Sendable {
 
 /// What happened as a result of an action, in order. The renderer animates these.
 public enum Event: Equatable, Sendable {
-    case moved(unit: Int, from: Position, to: Position)
+    /// `path` runs from the tile the unit left to the tile it reached, one step at a time.
+    case moved(unit: Int, path: [Position])
     case attacked(attacker: Int, defender: Int, damage: Int, isCritical: Bool, isCounter: Bool)
     case missed(attacker: Int, defender: Int, isCounter: Bool)
     case died(unit: Int, definitionID: String, at: Position, leftCorpse: Bool)
     case healed(unit: Int, amount: Int)
-    case raised(unit: Int, definitionID: String, at: Position, by: Int)
+    /// `unit` is the id the body had in life; `corpse` is the body that was used.
+    case raised(unit: Int, definitionID: String, at: Position, by: Int, corpse: Int)
     case corpsesDestroyed(at: Position, count: Int, by: Int)
     case consecrated(tiles: [Position], by: Int)
+    /// Tiles that were consecrated before this event and are not any more.
     case consecrationEnded(tiles: [Position])
     case dismissed(unit: Int, at: Position)
     case phaseBegan(side: Side, turn: Int)
@@ -40,6 +44,7 @@ public enum RuleError: Error, Equatable {
     case alreadyActed
     case nothingToUndo
     case unreachable
+    case tileOccupied
     case outOfRange
     case invalidTarget
     case missingSkill
@@ -48,6 +53,7 @@ public enum RuleError: Error, Equatable {
     case noCorpsesThere
     case dismissAlreadyUsed
     case cannotDismissOverlord
+    case playerOnly
     case noFreeTile
 }
 
@@ -71,10 +77,20 @@ public struct StrikeOdds: Equatable, Sendable {
 /// What the player is shown before confirming an attack.
 public struct Forecast: Equatable, Sendable {
     public var strike: StrikeOdds
-    /// False when a kill would be by a Holy attacker, or the target is the overlord.
+    /// Whether the target would leave a body if this attack killed it. False for a Holy attacker or an overlord target.
     public var leavesCorpse: Bool
     /// The defender's reply if it survives. Nil when it cannot reach the attacker.
     public var counter: StrikeOdds?
+    /// Whether the attacker would leave a body if the reply killed it. False against a Holy defender: that unit would be gone for good.
+    public var counterLeavesCorpse: Bool
+}
+
+/// Corpse tiles one side could deny on its next phase.
+public struct CorpseRisk: Equatable, Sendable {
+    /// Tiles with bodies that a unit could burn or purge.
+    public var burnable: [Position]
+    /// Tiles with bodies that a unit could cover with consecrated ground.
+    public var consecratable: [Position]
 }
 
 /// The rules. Holds no state of its own; every function takes the state it works on.
@@ -86,41 +102,93 @@ public struct Engine: Sendable {
     }
 
     public func definition(of unit: BattleUnit) -> UnitDefinition {
-        // Units are only created from known definitions, so this lookup cannot fail.
+        // A GameState only comes from a map or a validated save, both of which check every
+        // definition id, and code outside the package cannot edit a state. So this cannot fail.
         data.units[unit.definitionID]!
     }
 
-    // MARK: Queries
+    // MARK: Movement queries
+
+    private struct Search {
+        var cost: [Position: Int]
+        var previous: [Position: Position]
+    }
+
+    private func stepCost(onto tile: Position, drift: Bool, in state: GameState) -> Int? {
+        let t = state.terrain(at: tile)
+        guard state.contains(tile), t.isPassable else { return nil }
+        return (t == .rough && !drift) ? data.rules.roughMoveCost : 1
+    }
+
+    private func search(for unit: BattleUnit, in state: GameState) -> Search {
+        let def = definition(of: unit)
+        let drift = def.has(.drift)
+        var result = Search(cost: [unit.position: 0], previous: [:])
+        var frontier: [Position] = [unit.position]
+        while !frontier.isEmpty {
+            frontier.sort { (result.cost[$0]!, $0) < (result.cost[$1]!, $1) }
+            let current = frontier.removeFirst()
+            let cost = result.cost[current]!
+            for next in current.neighbours {
+                guard let step = stepCost(onto: next, drift: drift, in: state) else { continue }
+                if let other = state.unit(at: next), other.side != unit.side { continue }
+                let total = cost + step
+                guard total <= def.move, total < (result.cost[next] ?? Int.max) else { continue }
+                result.cost[next] = total
+                result.previous[next] = current
+                if !frontier.contains(next) { frontier.append(next) }
+            }
+        }
+        return result
+    }
 
     /// Tiles the unit can reach this phase, with the movement cost of each. Includes its own tile at cost 0.
     public func reachable(for unit: BattleUnit, in state: GameState) -> [Position: Int] {
-        let def = definition(of: unit)
-        let drift = def.has(.drift)
-        var best: [Position: Int] = [unit.position: 0]
-        var frontier: [Position] = [unit.position]
+        // A unit may pass through allies but not stop on them.
+        search(for: unit, in: state).cost.filter { $0.key == unit.position || state.unit(at: $0.key) == nil }
+    }
+
+    /// The tiles a unit walks through to reach `destination`, starting with its own tile. Nil if it cannot get there.
+    public func route(for unit: BattleUnit, to destination: Position, in state: GameState) -> [Position]? {
+        let s = search(for: unit, in: state)
+        guard s.cost[destination] != nil,
+              destination == unit.position || state.unit(at: destination) == nil else { return nil }
+        var path = [destination]
+        while let last = path.last, last != unit.position {
+            guard let before = s.previous[last] else { return nil }
+            path.append(before)
+        }
+        return path.reversed()
+    }
+
+    /// Walking distance from every tile to `goal` for this unit, ignoring other units. Used by the AI to find its way round walls.
+    public func distances(to goal: Position, for unit: BattleUnit, in state: GameState) -> [Position: Int] {
+        let drift = definition(of: unit).has(.drift)
+        guard state.contains(goal) else { return [:] }
+        var best: [Position: Int] = [goal: 0]
+        var frontier: [Position] = [goal]
         while !frontier.isEmpty {
             frontier.sort { (best[$0]!, $0) < (best[$1]!, $1) }
             let current = frontier.removeFirst()
-            let cost = best[current]!
+            // Walking from a neighbour onto `current` costs what `current` costs to enter.
+            let enter = stepCost(onto: current, drift: drift, in: state) ?? 1
             for next in current.neighbours {
-                let t = state.terrain(at: next)
-                guard state.contains(next), t.isPassable else { continue }
-                if let other = state.unit(at: next), other.side != unit.side { continue }
-                let step = (t == .rough && !drift) ? data.rules.roughMoveCost : 1
-                let total = cost + step
-                guard total <= def.move, total < (best[next] ?? Int.max) else { continue }
+                guard stepCost(onto: next, drift: drift, in: state) != nil else { continue }
+                let total = best[current]! + enter
+                guard total < (best[next] ?? Int.max) else { continue }
                 best[next] = total
                 if !frontier.contains(next) { frontier.append(next) }
             }
         }
-        // A unit may pass through allies but not stop on them.
-        return best.filter { $0.key == unit.position || state.unit(at: $0.key) == nil }
+        return best
     }
 
     public func inRange(_ def: UnitDefinition, from: Position, to: Position) -> Bool {
         let d = from.distance(to: to)
         return d >= def.minRange && d <= def.maxRange
     }
+
+    // MARK: Combat queries
 
     /// Guard including terrain and an adjacent ally's Bulwark.
     public func effectiveGuard(of unit: BattleUnit, at position: Position, in state: GameState) -> Int {
@@ -168,26 +236,108 @@ public struct Engine: Sendable {
     /// What the player is shown before `attacker`, standing at `from` (its current tile by default), attacks `defender`.
     public func forecast(attacker: BattleUnit, defender: BattleUnit, from: Position? = nil, in state: GameState) -> Forecast {
         let origin = from ?? attacker.position
+        let a = definition(of: attacker)
+        let d = definition(of: defender)
         let strike = odds(attacker: attacker, at: origin, defender: defender, at: defender.position, in: state)
-        let canCounter = inRange(definition(of: defender), from: defender.position, to: origin)
+        let canCounter = inRange(d, from: defender.position, to: origin)
         return Forecast(
             strike: strike,
-            leavesCorpse: definition(of: attacker).type != .holy && !definition(of: defender).overlord,
-            counter: canCounter ? odds(attacker: defender, at: defender.position, defender: attacker, at: origin, in: state) : nil)
+            leavesCorpse: a.type != .holy && !d.overlord,
+            counter: canCounter ? odds(attacker: defender, at: defender.position, defender: attacker, at: origin, in: state) : nil,
+            counterLeavesCorpse: d.type != .holy && !a.overlord)
     }
+
+    /// Enemies this unit could attack from `from` (its current tile by default).
+    public func attackTargets(for unit: BattleUnit, from: Position? = nil, in state: GameState) -> [BattleUnit] {
+        let def = definition(of: unit)
+        return state.units.filter { $0.side != unit.side && inRange(def, from: from ?? unit.position, to: $0.position) }
+    }
+
+    /// Hurt allies this unit could heal or mend from `from` (its current tile by default).
+    public func healTargets(for unit: BattleUnit, from: Position? = nil, in state: GameState) -> [BattleUnit] {
+        guard let (_, range) = healing(definition(of: unit)) else { return [] }
+        return state.units.filter {
+            $0.side == unit.side && $0.id != unit.id && $0.hp < definition(of: $0).maxHP
+                && $0.position.distance(to: from ?? unit.position) <= range
+        }
+    }
+
+    private func healing(_ def: UnitDefinition) -> (amount: Int, range: Int)? {
+        if def.has(.heal) { return (data.rules.healAmount, data.rules.healRange) }
+        if def.has(.mend) { return (data.rules.mendHeal, data.rules.mendRange) }
+        return nil
+    }
+
+    /// How far this unit can reach to destroy corpses, or nil if it cannot.
+    public func burnRange(_ def: UnitDefinition) -> Int? {
+        if def.has(.burnCorpses) { return data.rules.burnRange }
+        if def.has(.purgeCorpses) { return data.rules.purgeRange }
+        return nil
+    }
+
+    /// Every tile where a unit could be attacked by `side` on that side's next phase, as things stand now.
+    /// This is the "danger area" the interface shows.
+    public func threatenedTiles(by side: Side, in state: GameState) -> Set<Position> {
+        var tiles: Set<Position> = []
+        for unit in state.units(of: side) {
+            let def = definition(of: unit)
+            for from in reachable(for: unit, in: state).keys {
+                for dy in -def.maxRange...def.maxRange {
+                    let span = def.maxRange - abs(dy)
+                    for dx in -span...span {
+                        let target = Position(from.x + dx, from.y + dy)
+                        if state.contains(target), inRange(def, from: from, to: target) { tiles.insert(target) }
+                    }
+                }
+            }
+        }
+        return tiles
+    }
+
+    /// Corpse tiles that `side` could burn or consecrate on its next phase, as things stand now.
+    public func corpsesAtRisk(from side: Side, in state: GameState) -> CorpseRisk {
+        let piles = Set(state.corpses.map(\.position))
+        var burnable: Set<Position> = []
+        var consecratable: Set<Position> = []
+        for unit in state.units(of: side) {
+            let def = definition(of: unit)
+            let burn = burnRange(def)
+            let canConsecrate = def.has(.consecrate)
+            guard burn != nil || canConsecrate else { continue }
+            let from = reachable(for: unit, in: state).keys
+            for pile in piles {
+                if let burn, from.contains(where: { $0.distance(to: pile) <= burn }) { burnable.insert(pile) }
+                // A blessing covers its centre and the four tiles beside it, so it reaches one tile further.
+                if canConsecrate, !state.isConsecrated(pile),
+                   from.contains(where: { $0.distance(to: pile) <= data.rules.consecrateRange + 1 }) {
+                    consecratable.insert(pile)
+                }
+            }
+        }
+        return CorpseRisk(burnable: burnable.sorted(), consecratable: consecratable.sorted())
+    }
+
+    // MARK: Raising queries
 
     /// The number of undead under the player's command. The overlord does not count.
     public func commandCount(in state: GameState) -> Int {
         state.units.filter { $0.side == .player && !definition(of: $0).overlord }.count
     }
 
-    /// The unit a corpse would become if raised.
-    public func raisedDefinitionID(for corpse: Corpse) -> String? {
-        guard let def = data.units[corpse.definitionID] else { return nil }
-        return def.isLiving ? def.raisesAs : def.id
+    public func isAtCommandCap(in state: GameState) -> Bool {
+        commandCount(in: state) >= state.commandCap
     }
 
-    /// Corpses this unit could raise right now from where it stands.
+    /// The unit a corpse would become if raised. Nil if it cannot be raised at all.
+    public func raisedDefinitionID(for corpse: Corpse) -> String? {
+        guard let def = data.units[corpse.definitionID], !def.overlord else { return nil }
+        let id = def.isLiving ? def.raisesAs : def.id
+        guard let id, let raised = data.units[id], !raised.overlord else { return nil }
+        return id
+    }
+
+    /// Corpses within this unit's raise range that are not on consecrated ground.
+    /// This does not look at the command cap; check `isAtCommandCap` as well before offering a raise.
     public func raisableCorpses(for unit: BattleUnit, in state: GameState) -> [Corpse] {
         guard let range = definition(of: unit).raiseRange, definition(of: unit).has(.raise) else { return [] }
         return state.corpses.filter {
@@ -195,6 +345,11 @@ public struct Engine: Sendable {
                 && !state.isConsecrated($0.position)
                 && raisedDefinitionID(for: $0) != nil
         }
+    }
+
+    /// Units of a side that can still do something this phase.
+    public func unitsAbleToAct(_ side: Side, in state: GameState) -> [BattleUnit] {
+        state.phase == side ? state.units(of: side).filter { !$0.hasActed } : []
     }
 
     // MARK: Applying actions
@@ -224,29 +379,53 @@ public struct Engine: Sendable {
         state.units[index].movedFrom = nil
     }
 
+    /// Any new order makes earlier moves final: only the latest move can be taken back.
+    private func commitMoves(except id: Int?, _ state: inout GameState) {
+        for i in state.units.indices where state.units[i].id != id {
+            state.units[i].movedFrom = nil
+        }
+    }
+
+    private func consecratedTiles(_ state: GameState) -> Set<Position> {
+        Set(state.consecrations.flatMap(\.tiles))
+    }
+
+    /// Runs a change to the consecrations and reports the tiles that stopped being consecrated because of it.
+    private func changeConsecrations(_ state: inout GameState, _ events: inout [Event],
+                                     _ change: (inout [Consecration]) -> Void) {
+        let before = consecratedTiles(state)
+        change(&state.consecrations)
+        state.consecrations.removeAll { $0.tiles.isEmpty }
+        let ended = before.subtracting(consecratedTiles(state))
+        if !ended.isEmpty { events.append(.consecrationEnded(tiles: ended.sorted())) }
+    }
+
     private func perform(_ action: Action, _ state: inout GameState, _ events: inout [Event]) throws {
         switch action {
         case let .move(id, to):
             let (index, unit) = try actor(id, state)
             guard !unit.hasMoved else { throw RuleError.alreadyMoved }
-            guard to != unit.position, reachable(for: unit, in: state)[to] != nil else { throw RuleError.unreachable }
+            guard to != unit.position, let path = route(for: unit, to: to, in: state) else { throw RuleError.unreachable }
+            commitMoves(except: nil, &state)
             state.units[index].movedFrom = unit.position
             state.units[index].position = to
             state.units[index].hasMoved = true
-            events.append(.moved(unit: id, from: unit.position, to: to))
+            events.append(.moved(unit: id, path: path))
 
         case let .undoMove(id):
             let (index, unit) = try actor(id, state)
             guard let origin = unit.movedFrom else { throw RuleError.nothingToUndo }
+            guard state.unit(at: origin) == nil else { throw RuleError.tileOccupied }
             state.units[index].position = origin
             state.units[index].movedFrom = nil
             state.units[index].hasMoved = false
-            events.append(.moved(unit: id, from: unit.position, to: origin))
+            events.append(.moved(unit: id, path: [unit.position, origin]))
 
         case let .attack(id, targetID):
             let (index, unit) = try actor(id, state)
             guard let target = state.unit(id: targetID), target.side != unit.side else { throw RuleError.invalidTarget }
             guard inRange(definition(of: unit), from: unit.position, to: target.position) else { throw RuleError.outOfRange }
+            commitMoves(except: id, &state)
             finish(index, &state)
             strike(attackerID: id, defenderID: targetID, isCounter: false, &state, &events)
             // The defender replies if it is still standing and can reach the attacker.
@@ -263,30 +442,29 @@ public struct Engine: Sendable {
             let corpse = state.corpses[corpseIndex]
             guard corpse.position.distance(to: unit.position) <= range else { throw RuleError.outOfRange }
             guard !state.isConsecrated(corpse.position) else { throw RuleError.consecratedGround }
-            guard let newID = raisedDefinitionID(for: corpse), let newDef = data.units[newID] else { throw RuleError.invalidTarget }
+            guard let newID = raisedDefinitionID(for: corpse), let newDef = data.units[newID],
+                  state.unit(id: corpse.unitID) == nil else { throw RuleError.invalidTarget }
             if unit.side == .player {
-                guard commandCount(in: state) < state.commandCap else { throw RuleError.commandCapReached }
+                guard !isAtCommandCap(in: state) else { throw RuleError.commandCapReached }
             }
             guard let tile = nearestFreeTile(to: corpse.position, in: state) else { throw RuleError.noFreeTile }
+            commitMoves(except: id, &state)
             state.corpses.remove(at: corpseIndex)
-            // Baseline raise: full health, but the unit cannot act until its side's next phase.
-            let raised = BattleUnit(id: state.nextUnitID, definitionID: newID, side: unit.side, position: tile,
-                              hp: newDef.maxHP, hasMoved: true, hasActed: true)
-            state.nextUnitID += 1
-            state.units.append(raised)
             finish(index, &state)
-            events.append(.raised(unit: raised.id, definitionID: newID, at: tile, by: id))
+            // Baseline raise: full health, but the unit cannot act until its side's next phase.
+            let raised = BattleUnit(id: corpse.unitID, definitionID: newID, side: unit.side, position: tile,
+                                    hp: newDef.maxHP, hasMoved: true, hasActed: true)
+            state.units.append(raised)
+            state.units.sort { $0.id < $1.id }
+            events.append(.raised(unit: raised.id, definitionID: newID, at: tile, by: id, corpse: corpse.id))
 
         case let .burn(id, tile):
             let (index, unit) = try actor(id, state)
-            let def = definition(of: unit)
-            let range: Int
-            if def.has(.burnCorpses) { range = data.rules.burnRange }
-            else if def.has(.purgeCorpses) { range = data.rules.purgeRange }
-            else { throw RuleError.missingSkill }
+            guard let range = burnRange(definition(of: unit)) else { throw RuleError.missingSkill }
             guard unit.position.distance(to: tile) <= range else { throw RuleError.outOfRange }
             let count = state.corpses(at: tile).count
             guard count > 0 else { throw RuleError.noCorpsesThere }
+            commitMoves(except: id, &state)
             state.corpses.removeAll { $0.position == tile }
             finish(index, &state)
             events.append(.corpsesDestroyed(at: tile, count: count, by: id))
@@ -294,31 +472,32 @@ public struct Engine: Sendable {
         case let .consecrate(id, tile):
             let (index, unit) = try actor(id, state)
             guard definition(of: unit).has(.consecrate) else { throw RuleError.missingSkill }
-            guard state.contains(tile), unit.position.distance(to: tile) <= data.rules.consecrateRange else { throw RuleError.outOfRange }
-            let tiles = ([tile] + tile.neighbours).filter { state.contains($0) }
-            var mine = state.consecrations.filter { $0.casterID == id }.sorted { $0.sequence < $1.sequence }
-            while mine.count >= data.rules.maxConsecrationsPerCaster {
-                let oldest = mine.removeFirst()
-                state.consecrations.removeAll { $0.casterID == id && $0.sequence == oldest.sequence }
-                events.append(.consecrationEnded(tiles: oldest.tiles))
-            }
-            state.consecrations.append(Consecration(casterID: id, sequence: state.nextSequence, tiles: tiles))
+            guard state.contains(tile), state.terrain(at: tile).isPassable else { throw RuleError.invalidTarget }
+            guard unit.position.distance(to: tile) <= data.rules.consecrateRange else { throw RuleError.outOfRange }
+            commitMoves(except: id, &state)
+            let tiles = ([tile] + tile.neighbours).filter { state.contains($0) && state.terrain(at: $0).isPassable }
+            let sequence = state.nextSequence
             state.nextSequence += 1
+            let limit = data.rules.maxConsecrationsPerCaster
+            changeConsecrations(&state, &events) { all in
+                all.append(Consecration(casterID: id, sequence: sequence, tiles: tiles))
+                // Each caster keeps only its newest areas; older ones lapse.
+                let mine = all.filter { $0.casterID == id }.map(\.sequence).sorted()
+                let lapsed = Set(mine.dropLast(limit))
+                all.removeAll { $0.casterID == id && lapsed.contains($0.sequence) }
+            }
             finish(index, &state)
             events.append(.consecrated(tiles: tiles, by: id))
 
         case let .heal(id, targetID):
             let (index, unit) = try actor(id, state)
-            let def = definition(of: unit)
-            let amount: Int, range: Int
-            if def.has(.heal) { amount = data.rules.healAmount; range = data.rules.healRange }
-            else if def.has(.mend) { amount = data.rules.mendHeal; range = data.rules.mendRange }
-            else { throw RuleError.missingSkill }
+            guard let (amount, range) = healing(definition(of: unit)) else { throw RuleError.missingSkill }
             guard let targetIndex = state.units.firstIndex(where: { $0.id == targetID }) else { throw RuleError.noSuchUnit }
             let target = state.units[targetIndex]
             let maxHP = definition(of: target).maxHP
             guard target.side == unit.side, target.id != id, target.hp < maxHP else { throw RuleError.invalidTarget }
             guard unit.position.distance(to: target.position) <= range else { throw RuleError.outOfRange }
+            commitMoves(except: id, &state)
             let healed = min(amount, maxHP - target.hp)
             state.units[targetIndex].hp += healed
             finish(index, &state)
@@ -328,29 +507,28 @@ public struct Engine: Sendable {
             let (index, unit) = try actor(id, state)
             guard definition(of: unit).has(.defile) else { throw RuleError.missingSkill }
             let cleared = Set([unit.position] + unit.position.neighbours)
-            var removed: [Position] = []
-            for i in state.consecrations.indices {
-                removed += state.consecrations[i].tiles.filter { cleared.contains($0) }
-                state.consecrations[i].tiles.removeAll { cleared.contains($0) }
+            guard !cleared.isDisjoint(with: consecratedTiles(state)) else { throw RuleError.invalidTarget }
+            commitMoves(except: id, &state)
+            changeConsecrations(&state, &events) { all in
+                for i in all.indices { all[i].tiles.removeAll { cleared.contains($0) } }
             }
-            guard !removed.isEmpty else { throw RuleError.invalidTarget }
-            state.consecrations.removeAll { $0.tiles.isEmpty }
             finish(index, &state)
-            events.append(.consecrationEnded(tiles: removed.sorted()))
 
         case let .wait(id):
             let (index, _) = try actor(id, state)
+            commitMoves(except: id, &state)
             finish(index, &state)
 
         case let .dismiss(id):
             let (index, unit) = try actor(id, state, mayHaveActed: true)
+            guard unit.side == .player else { throw RuleError.playerOnly }
             guard !state.dismissUsedThisPhase else { throw RuleError.dismissAlreadyUsed }
             guard !definition(of: unit).overlord else { throw RuleError.cannotDismissOverlord }
-            state.units.remove(at: index)
-            state.corpses.append(Corpse(id: state.nextCorpseID, definitionID: unit.definitionID, position: unit.position))
-            state.nextCorpseID += 1
+            commitMoves(except: nil, &state)
             state.dismissUsedThisPhase = true
+            removeUnit(at: index, leavingCorpse: true, &state)
             events.append(.dismissed(unit: id, at: unit.position))
+            changeConsecrations(&state, &events) { $0.removeAll { $0.casterID == id } }
 
         case .endPhase:
             state.phase = state.phase.opponent
@@ -363,6 +541,18 @@ public struct Engine: Sendable {
             }
             events.append(.phaseBegan(side: state.phase, turn: state.turn))
         }
+    }
+
+    /// Takes a unit off the board, leaving its body if asked. Every way a unit leaves goes through here.
+    @discardableResult
+    private func removeUnit(at index: Int, leavingCorpse: Bool, _ state: inout GameState) -> BattleUnit {
+        let unit = state.units.remove(at: index)
+        if leavingCorpse {
+            state.corpses.append(Corpse(id: state.nextCorpseID, unitID: unit.id, definitionID: unit.definitionID,
+                                        side: unit.side, position: unit.position))
+            state.nextCorpseID += 1
+        }
+        return unit
     }
 
     /// Rolls and resolves one strike. Two rolls at most: one to hit, and if it hits, one for a critical.
@@ -382,22 +572,13 @@ public struct Engine: Sendable {
         events.append(.attacked(attacker: attackerID, defender: defenderID, damage: damage, isCritical: isCritical, isCounter: isCounter))
         guard state.units[defenderIndex].hp <= 0 else { return }
 
-        let dead = state.units.remove(at: defenderIndex)
-        let deadDef = definition(of: dead)
         let attackerDef = definition(of: attacker)
+        let deadDef = definition(of: defender)
         let leavesCorpse = attackerDef.type != .holy && !deadDef.overlord
-        if leavesCorpse {
-            state.corpses.append(Corpse(id: state.nextCorpseID, definitionID: dead.definitionID, position: dead.position))
-            state.nextCorpseID += 1
-        }
+        let dead = removeUnit(at: defenderIndex, leavingCorpse: leavesCorpse, &state)
         events.append(.died(unit: dead.id, definitionID: dead.definitionID, at: dead.position, leftCorpse: leavesCorpse))
-
         // A caster's consecrated ground ends with the caster.
-        let ended = state.consecrations.filter { $0.casterID == dead.id }
-        if !ended.isEmpty {
-            state.consecrations.removeAll { $0.casterID == dead.id }
-            events.append(.consecrationEnded(tiles: ended.flatMap(\.tiles).sorted()))
-        }
+        changeConsecrations(&state, &events) { $0.removeAll { $0.casterID == dead.id } }
 
         if attackerDef.has(.feed), let i = state.units.firstIndex(where: { $0.id == attackerID }) {
             let healed = min(data.rules.feedHeal, attackerDef.maxHP - state.units[i].hp)
@@ -433,48 +614,5 @@ public struct Engine: Sendable {
             ring = nextRing
         }
         return nil
-    }
-}
-
-// MARK: Save and load
-
-extension GameState {
-    /// Encodes the battle as JSON. Keys are sorted so the same state always gives the same bytes.
-    public func saved() throws -> Data {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        return try encoder.encode(self)
-    }
-
-    public static func load(_ data: Data) throws -> GameState {
-        try JSONDecoder().decode(GameState.self, from: data)
-    }
-
-    /// A text picture of the map for tests and debugging. Not used for display in the game.
-    public func ascii(_ data: GameData) -> String {
-        var lines: [String] = []
-        for y in 0..<height {
-            var line = ""
-            for x in 0..<width {
-                let p = Position(x, y)
-                if let u = unit(at: p) {
-                    let letter = data.units[u.definitionID]?.name.first ?? "?"
-                    line += u.side == .player ? String(letter).uppercased() : String(letter).lowercased()
-                } else if !corpses(at: p).isEmpty {
-                    line += isConsecrated(p) ? "X" : "x"
-                } else if isConsecrated(p) {
-                    line += "+"
-                } else {
-                    switch terrain(at: p) {
-                    case .open: line += "."
-                    case .rough: line += "f"
-                    case .wall: line += "#"
-                    case .water: line += "~"
-                    }
-                }
-            }
-            lines.append(line)
-        }
-        return lines.joined(separator: "\n")
     }
 }

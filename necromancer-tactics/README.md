@@ -33,7 +33,7 @@ GitHub Actions runs the same command on every push that touches
 | Path | Contents |
 |---|---|
 | `NecroRules/Sources/NecroRules/` | The rules: model, data loading, engine, enemy AI. No rendering or UI code. |
-| `NecroRules/Sources/NecroRules/Resources/` | Data files: `units.json`, `rules.json`, `maps/`. Balance changes go here, not in code. |
+| `NecroRules/Sources/NecroRules/Data/` | Data files: `units.json`, `rules.json`, `maps/`. Balance changes go here, not in code. |
 | `NecroRules/Tests/NecroRulesTests/` | Unit tests. |
 
 The Xcode project for the app will be added beside `NecroRules/` and will

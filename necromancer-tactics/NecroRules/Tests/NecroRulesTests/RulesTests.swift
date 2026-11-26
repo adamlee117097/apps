@@ -56,7 +56,7 @@ import Testing
 }
 
 @Suite struct CombatTests {
-    /// The worked examples in GDD section 5.3.
+    /// The worked examples in GDD section 5.4.
     @Test(arguments: [
         ("skeleton", "militia", 5),
         ("ghoul", "cleric", 15),

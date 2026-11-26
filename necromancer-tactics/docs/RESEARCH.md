@@ -190,9 +190,11 @@ What this means in practice:
 
 ### 2.3 Setup steps that need Adam present
 
-The steps, with Apple's wording for each, are in `MAC_SETUP.md` section 3:
-update macOS, install Xcode, sign in, allow outside agents, create the project,
-pair the phone, turn on Developer Mode, trust the developer certificate.
+The steps, in order and with Apple's wording for each, are in `MAC_SETUP.md`
+section 3: install Claude Code, update macOS, install Xcode, sign in, allow
+outside agents, create the project, connect Claude Code to Xcode, update the
+phone, pair it, turn on Developer Mode, set up signing, trust the developer
+certificate.
 
 They are not all one-time. Apple says of pairing: "If you upgrade the operating
 system later, you'll need to pair the device again."
@@ -308,11 +310,15 @@ quotations in this list:
   in SwiftUI.)
 
 Result for hardware feature 3 (tabletop pose): **feasible with first-party
-API.** Inference: with the map as the primary view and the controls as the
-secondary view, a split arrangement puts the map above the fold and the controls
-below it when the phone is folded like a laptop. Apple: "it places the primary
-view on top and the secondary view below it when the containing view is taller
-than it is wide".
+API.** Apple describes two arrangement styles. A split arrangement keeps two
+views in separate spaces: "it places the primary view on top and the secondary
+view below it when the containing view is taller than it is wide". An overlay
+arrangement layers them when the phone is flat and separates them when it is
+folded. Inference: the game wants the overlay style, with the controls as the
+primary view and the map as the secondary, so the map fills the screen when
+flat and sits above the controls when the phone is folded like a laptop. A
+split would halve the map on the flat display. Detail in `MAC_SETUP.md`
+section 7.
 <https://developer.apple.com/documentation/technologyoverviews/preparing-your-app-for-iphone-duo>
 
 ### 3.3 Crease and cameras
@@ -875,8 +881,8 @@ unverified and it has no hinge or fold-layout API.
 6. **Simulator limits.** Apple: "When running apps in a simulator in Device Hub,
    some hardware-specific features might not be available."
    <https://developer.apple.com/documentation/xcode/running-your-app-on-simulated-or-physical-devices>
-   Two-finger gestures and Pencil cannot be sent to the simulator in Xcode 27.2
-   (`MAC_SETUP.md` section 6). Haptics, real 120 Hz and hinge feel should be
+   Pencil cannot be simulated, and two-finger touches cannot be sent with a
+   mouse in Xcode 27.2 (`MAC_SETUP.md` section 6). Haptics, real 120 Hz and hinge feel should be
    judged on the device.
 7. **Mac mini.** Adam's M4 Mac mini (2024) is on Apple's compatibility lists.
    Still to check on the Mac: the installed macOS version and free disk space

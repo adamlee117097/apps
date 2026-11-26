@@ -38,14 +38,17 @@ for the first session there is `MAC_SETUP.md`.
 - **Data files**: 20 units, rule constants, type chart, AI weights, and the
   16 × 12 slice map.
 - **112 tests**, passing locally. GitHub Actions runs them on every push.
-- **Mac plan** (`MAC_SETUP.md`): what to install, what Adam must do in person,
-  how Claude Code drives Xcode, what a free account allows, what the simulator
-  cannot show, and the first task (a fold prototype).
+- **Mac plan** (`MAC_SETUP.md`): what to install, what Adam must do in person
+  and in what order, how Claude Code drives Xcode, what a free account allows,
+  what the simulator cannot show, and the first task (a fold prototype).
+- **Look-and-feel mock-ups** (`docs/mockups/`): a style sheet and the battle
+  screen in three poses, drawn in code by `tools/mockups/render.js`. They are
+  placeholders, not final art.
 - **Art research** (`ART_PIPELINE.md`): Google's current image models, cost,
   terms, watermarking, Apple's rules, and a proposed pipeline. Nothing has been
   generated.
 - **Citation checker** (`tools/citations`): every quotation in `RESEARCH.md`
-  (126), `MAC_SETUP.md` (65) and `ART_PIPELINE.md` (28) is checked against its
+  (126), `MAC_SETUP.md` (91) and `ART_PIPELINE.md` (56) is checked against its
   source page by script.
 
 ## Review of 2026-11-26: what ran and what did not
@@ -64,8 +67,8 @@ part-way.
 | Code review: mutation testing | Agent did not run. Claude scripted it: of 53 deliberate code changes the tests caught 38 and missed 15. Tests were added; a rerun caught 14 of the 15. The last was a redundant check, now removed |
 | Second-agent verification of the code findings | Did not run. Claude reproduced each bug with a test before fixing it |
 | Mac research, four researchers | Completed. Quotations machine-checked (110 of 110 found) |
-| Second-agent verification of the Mac research, and a completeness critic | Did not run |
-| Research on Google image generation for sprites | Agents did not run. Claude read Google's and Apple's pages directly and wrote `ART_PIPELINE.md`; its 28 quotations are machine-checked, its reasoning has had no second reader |
+| Second-reader review of `MAC_SETUP.md` | Ran after the limit was reset: two reviewers, 25 problems (step order, omissions, overstatements). All corrected |
+| Research on Google image generation for sprites | Claude read Google's and Apple's pages and wrote `ART_PIPELINE.md`. One reviewer then found 15 problems and omissions. All corrected |
 
 ## Not done yet in the rules package
 

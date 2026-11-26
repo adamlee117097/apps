@@ -15,6 +15,7 @@ the bodies on the field. Original world, characters and lore.
 | `docs/MAC_SETUP.md` | Checklist and sourced plan for the first session on the Mac. |
 | `docs/ART_PIPELINE.md` | What Google's and Apple's terms say about generated sprites, cost, and the proposed pipeline. |
 | `docs/research-notes/` | Raw notes from research agents. Leads, not reviewed text. |
+| `docs/mockups/` | Code-drawn look-and-feel mock-ups (placeholders). Regenerate with `node tools/mockups/render.js docs/mockups`. |
 | `tools/citations/` | Scripts that check the quotations in the docs against the pages they cite. |
 | `NecroRules/` | Swift package with the game rules and their tests. |
 

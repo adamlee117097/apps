@@ -163,6 +163,27 @@ Engineering decisions:
   `aistudio.google.com`, for research on Google's image generation that has not
   been done yet.
 
+## 2026-11-26: Second review round
+
+Adam reset the usage limits, and three independent reviewers read
+`MAC_SETUP.md` and `ART_PIPELINE.md` against their sources. What changed:
+
+- **Fold prototype layout.** The map goes in an overlay arrangement as the
+  secondary view, with the controls as primary. The earlier plan (map as the
+  primary of a split arrangement) would have halved the map on the flat
+  display.
+- **Order of the in-person steps.** Claude Code is installed first; the phone is
+  updated before it is paired; connecting Claude Code to Xcode and setting up
+  signing are now explicit steps.
+- **Art.** Google states that its image models cannot produce transparent
+  backgrounds, and documents style references only for its dearest model. The
+  trial therefore runs on two models. Apple's rules on disturbing content and
+  on store imagery are wider than first reported: the art direction is
+  stylised, not realistic, with corpse markers that read as game pieces. The
+  expected age rating is 13+ (inference).
+- **Pinch in the simulator** is possible with a trackpad, not with a mouse. The
+  folded view keeps both the pinch and an Overview button.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |

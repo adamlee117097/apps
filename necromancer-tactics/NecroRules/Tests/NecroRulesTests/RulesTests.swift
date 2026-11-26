@@ -285,7 +285,9 @@ import Testing
         try f.apply(.endPhase)
         try f.apply(.consecrate(unit: cleric, tile: Position(5, 4)))
         #expect(f.state.consecrations.count == 2)
-        #expect(!f.state.isConsecrated(Position(3, 2)))  // the oldest area lapsed
+        // The area with no body on it lapsed, not the older one that holds the knight's body.
+        #expect(f.state.isConsecrated(Position(3, 2)))
+        #expect(!f.state.isConsecrated(Position(5, 0)))
         #expect(f.state.isConsecrated(Position(5, 4)))
     }
 

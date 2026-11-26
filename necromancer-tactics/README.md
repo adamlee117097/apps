@@ -35,6 +35,13 @@ swift test
 GitHub Actions runs the same command on every push that touches
 `necromancer-tactics/` (workflow: `.github/workflows/necromancer-tactics.yml`).
 
+To measure how battles on the slice map go (wins, losses, how often the enemy
+denies bodies) over many seeded battles against a scripted player:
+
+```sh
+NECRO_SWEEP=1000 swift test --filter BattlesEndTests
+```
+
 ## Layout
 
 | Path | Contents |

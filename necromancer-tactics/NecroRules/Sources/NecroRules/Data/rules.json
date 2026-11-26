@@ -63,6 +63,7 @@
     "kill": 60,
     "overlordKill": 100000,
     "overlordAssault": 50000,
+    "overlordAssaultMinChance": 35,
     "holyKill": 40,
     "overlordPressure": 30,
     "raiserTarget": 20,
@@ -74,6 +75,8 @@
     "consecrateReach": 40,
     "outOfReachDivisor": 4,
     "alreadyDeniedDivisor": 4,
-    "heal": 8
+    "heal": 8,
+    "exposureDamage": 6,
+    "exposureDeath": 80
   }
 }

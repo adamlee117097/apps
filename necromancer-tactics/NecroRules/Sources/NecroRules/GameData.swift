@@ -42,6 +42,8 @@ public struct AIWeights: Codable, Equatable, Sendable {
     public var overlordKill: Int
     /// Added to an attack on the overlord when the units still to act could kill it this phase between them.
     public var overlordAssault: Int
+    /// The least chance, in percent, of the overlord falling this phase for the group attack to be called.
+    public var overlordAssaultMinChance: Int
     /// A Holy kill leaves nothing to raise.
     public var holyKill: Int
     public var overlordPressure: Int
@@ -60,6 +62,10 @@ public struct AIWeights: Codable, Equatable, Sendable {
     public var alreadyDeniedDivisor: Int
     /// Per point of health restored to a badly hurt ally.
     public var heal: Int
+    /// For units that deny bodies: per point of damage they can expect to take next phase on the tile they end on.
+    public var exposureDamage: Int
+    /// For the same units: ending where that damage would probably kill them.
+    public var exposureDeath: Int
 }
 
 /// Tunable rule constants and the type chart, loaded from `rules.json`.

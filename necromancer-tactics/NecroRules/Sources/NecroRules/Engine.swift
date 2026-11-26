@@ -183,6 +183,35 @@ public struct Engine: Sendable {
         return best
     }
 
+    /// Walking distance for this unit from every tile to the nearest of `targets`. Allies can be walked
+    /// through and the other side's units cannot, as in a real move. Used by the AI to walk round units.
+    public func distances(toAnyOf targets: [Position], for unit: BattleUnit, in state: GameState) -> [Position: Int] {
+        let drift = definition(of: unit).has(.drift)
+        func blocked(_ tile: Position) -> Bool {
+            if let other = state.unit(at: tile) { return other.side != unit.side }
+            return false
+        }
+        var best: [Position: Int] = [:]
+        var frontier: [Position] = []
+        for target in targets.sorted() where stepCost(onto: target, drift: drift, in: state) != nil && !blocked(target) {
+            best[target] = 0
+            frontier.append(target)
+        }
+        while !frontier.isEmpty {
+            frontier.sort { (best[$0]!, $0) < (best[$1]!, $1) }
+            let current = frontier.removeFirst()
+            let enter = stepCost(onto: current, drift: drift, in: state) ?? 1
+            for next in current.neighbours {
+                guard stepCost(onto: next, drift: drift, in: state) != nil, !blocked(next) else { continue }
+                let total = best[current]! + enter
+                guard total < (best[next] ?? Int.max) else { continue }
+                best[next] = total
+                if !frontier.contains(next) { frontier.append(next) }
+            }
+        }
+        return best
+    }
+
     public func inRange(_ def: UnitDefinition, from: Position, to: Position) -> Bool {
         let d = from.distance(to: to)
         return d >= def.minRange && d <= def.maxRange
@@ -266,6 +295,18 @@ public struct Engine: Sendable {
         if def.has(.heal) { return (data.rules.healAmount, data.rules.healRange) }
         if def.has(.mend) { return (data.rules.mendHeal, data.rules.mendRange) }
         return nil
+    }
+
+    /// The areas this caster would give up by consecrating once more. A caster holds a limited number.
+    /// An area with no body on it lapses before one that holds bodies; within each kind, the oldest goes first.
+    public func areasThatWouldLapse(for casterID: Int, in state: GameState) -> [Consecration] {
+        let mine = state.consecrations.filter { $0.casterID == casterID }.sorted { $0.sequence < $1.sequence }
+        let excess = mine.count + 1 - data.rules.maxConsecrationsPerCaster
+        guard excess > 0 else { return [] }
+        let bodies = Set(state.corpses.map(\.position))
+        let empty = mine.filter { bodies.isDisjoint(with: $0.tiles) }
+        let holding = mine.filter { !bodies.isDisjoint(with: $0.tiles) }
+        return Array((empty + holding).prefix(excess))
     }
 
     /// How far this unit can reach to destroy corpses, or nil if it cannot.
@@ -479,13 +520,10 @@ public struct Engine: Sendable {
             let tiles = ([tile] + tile.neighbours).filter { state.contains($0) && state.terrain(at: $0).isPassable }
             let sequence = state.nextSequence
             state.nextSequence += 1
-            let limit = data.rules.maxConsecrationsPerCaster
+            let lapsed = Set(areasThatWouldLapse(for: id, in: state).map(\.sequence))
             changeConsecrations(&state, &events) { all in
-                all.append(Consecration(casterID: id, sequence: sequence, tiles: tiles))
-                // Each caster keeps only its newest areas; older ones lapse.
-                let mine = all.filter { $0.casterID == id }.map(\.sequence).sorted()
-                let lapsed = Set(mine.dropLast(limit))
                 all.removeAll { $0.casterID == id && lapsed.contains($0.sequence) }
+                all.append(Consecration(casterID: id, sequence: sequence, tiles: tiles))
             }
             finish(index, &state)
             events.append(.consecrated(tiles: tiles, by: id))

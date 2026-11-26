@@ -314,7 +314,7 @@ priority target in one or two.
 ## 6. The overlord
 
 - The player names the overlord. A default name will be workshopped with the title (13.4).
-- Before choosing a path (Rise): Sovereign type, HP 24, Mgt 10, Grd 3, Wrd 4,
+- Before choosing a path (Rise): Sovereign type, HP 24, Mgt 14, Grd 3, Wrd 4,
   Mov 4, Rng 1–2, magic damage, Raise Range 2.
 - The overlord gains levels from battles won and objectives met, level 1 to 10.
   Level raises the command cap (3.5) and the overlord's stats.
@@ -325,7 +325,7 @@ priority target in one or two.
 | | Death Knight | Lich King |
 |---|---|---|
 | Overlord's role (agreed) | Front line | Back line |
-| Overlord stats at level 3 | HP 34, Mgt 13, Grd 7, Wrd 3, Mov 4, Rng 1, physical | HP 22, Mgt 12, Grd 2, Wrd 6, Mov 4, Rng 1–3, magic |
+| Overlord stats at level 3 | HP 34, Mgt 15, Grd 7, Wrd 3, Mov 4, Rng 1, physical | HP 22, Mgt 14, Grd 2, Wrd 6, Mov 4, Rng 1–3, magic |
 | Army (agreed) | Few, elite | Many, weak |
 | Command cap | 4 rising to 7 | 6 rising to 12 |
 | Raise Range | 1 (must stand next to the body) | 3 |
@@ -417,9 +417,9 @@ Raise Range.
 
 Measured on the slice map over 200 seeded battles against a competent scripted
 player (the overlord walks to bodies and raises them; other units use the same
-planning as the enemy): 162 player wins, 34 losses, 4 unfinished after 80
-turns; 1,319 raises, 183 consecrations and 122 corpse burnings. Against a
-player that never seeks out bodies: 2 wins, 198 losses. Raising decides the
+planning as the enemy): 171 player wins, 20 losses, 9 unfinished after 80
+turns; 1,374 raises, 190 consecrations and 124 corpse burnings. Against a
+player that never seeks out bodies: 2 wins, 197 losses, 1 unfinished. Raising decides the
 battle, which is the intent. These are scripted players, not people; balance
 still needs a human.
 
@@ -645,7 +645,7 @@ noted.
 
 | # | Principle | Draft 2 | Verdict |
 |---|---|---|---|
-| 1 | Army is the main source of power | The overlord hits about as hard as a Skeleton and has no damage spells. In the scripted test battles all damage comes from the army | Holds. Made a rule below |
+| 1 | Army is the main source of power | The overlord had the attack of a Skeleton and no damage spells | Changed by Adam: the overlord now hits hardest. See below for how the army stays the main source of power |
 | 2 | Feels like an army | Caps of 4 to 7 (Death Knight) and 6 to 12 (Lich King) | **Too small.** Twelve units is not a swarm |
 | 3 | Minions scale | Only the Death Knight's raised units gain levels. Lich King units never improve | **Missing** |
 | 4 | Real corpses only | Every unit comes from a body on the map, including the keep's Charnel Pit, which places bodies | Holds |
@@ -653,12 +653,37 @@ noted.
 | 6 | No bad minion AI | Direct command of every unit. No auto-control designed | **Needed** once armies are large |
 | 7 | The world reacts | A currency called Dread, and heroes who arrive in the last act | **Thin.** No system makes the world respond |
 
-### 14.1 Overlord power (principle 1)
+### 14.1 Overlord power (principle 1; decided by Adam 2026-11-26)
 
-Rule for all future balance: at any level, the overlord deals no more damage per
-attack than the player's best ordinary unit of that level. The overlord's
-abilities act on the army (raise, empower, command) and never deal area damage.
-The two promotion abilities in section 7 already fit this.
+Adam's decision: **the overlord hits harder than any of his minions.** Might is
+now 14 before a path is chosen (the strongest undead, the Oathbreaker, has 13),
+15 for the Death Knight and 14 for the Lich King at level 3. A test fails if
+any undead ever matches the overlord's Might.
+
+How this sits with principle 1, that most damage and board control come from
+the army:
+
+- The overlord is the strongest single piece, but acts once a turn like every
+  unit, and an army of five to twenty-four acts five to twenty-four times. The
+  army's total damage stays several times the overlord's.
+- **The overlord's action is contested.** Attacking and raising both use it, so
+  every hard hit is a body left on the ground.
+- **Using that strength is a risk.** The overlord is the only fail state, and to
+  strike he has to be within reach of the enemy.
+- The overlord still has no area damage and no way to act twice by attacking.
+  His multipliers go to the army (raise, empower, command).
+
+Rules for future balance:
+
+1. At every level the overlord's Might is at least 1 above the highest Might of
+   any undead he can field at that level, including after the scaling in 14.3.
+2. Measured in whole battles, the army deals most of the damage. If testing
+   shows the overlord dealing more than about a third of it, the fix is to the
+   army's strength or the overlord's risk, not to the rule above.
+
+Not yet measured: the scripted test player never attacks with the overlord, so
+the test battles show only the effect on his counterattacks. A person playing
+will use him more.
 
 ### 14.2 A larger command cap (principle 2)
 
@@ -726,7 +751,7 @@ could go into the slice if Adam wants to feel it there.
   acted, and give one order: advance on a target, hold, or attack at will. Each
   unit then acts using the same planner the enemy uses.
 - The bar for "good enough to rely on": that planner already drives the
-  player's army in the test battles, where it wins 162 of 200 with a simple
+  player's army in the test battles, where it wins 171 of 200 with a simple
   overlord script. Before group orders ship, the same test must hold on a
   swarm-sized battle, and units under a group order must never take an action
   the forecast shows as a likely death without the player choosing it.

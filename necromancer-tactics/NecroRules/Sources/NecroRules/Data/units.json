@@ -1,6 +1,6 @@
 {
   "units": [
-    { "id": "overlord", "name": "Overlord", "type": "sovereign", "maxHP": 24, "might": 10, "guard": 3, "ward": 4, "move": 4, "hit": 90, "avoid": 10, "crit": 0, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["raise"], "raiseRange": 2, "isOverlord": true },
+    { "id": "overlord", "name": "Overlord", "type": "sovereign", "maxHP": 24, "might": 14, "guard": 3, "ward": 4, "move": 4, "hit": 90, "avoid": 10, "crit": 0, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["raise"], "raiseRange": 2, "isOverlord": true },
     { "id": "gravespeaker", "name": "Gravespeaker", "type": "sovereign", "maxHP": 14, "might": 7, "guard": 2, "ward": 4, "move": 4, "hit": 85, "avoid": 10, "crit": 0, "minRange": 1, "maxRange": 2, "damage": "magic", "skills": ["raise"], "raiseRange": 1 },
 
     { "id": "skeleton", "name": "Skeleton", "type": "bone", "maxHP": 18, "might": 10, "guard": 4, "ward": 1, "move": 4, "hit": 85, "avoid": 5, "crit": 0, "minRange": 1, "maxRange": 1, "damage": "physical", "skills": [] },

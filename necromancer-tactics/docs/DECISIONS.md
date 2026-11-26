@@ -200,6 +200,24 @@ non-negotiable. The brief is now kept in the repository as `docs/BRIEF.md`.
   undead, a Dominion aura around the overlord, group orders, and a Notoriety
   score. **They await Adam's review.** No code was changed.
 
+## 2026-11-26: The overlord hits hardest
+
+Claude had proposed that the overlord deal no more damage than the player's best
+ordinary unit, to keep the army the main source of power. Adam's words: "I
+disagree. I feel like the Overlord should hit the hardest than any of his
+minions."
+
+- **Decision:** the overlord's Might is above that of every undead unit. Base
+  overlord 10 to 14; Death Knight 13 to 15; Lich King 12 to 14. A test enforces
+  it for the data that exists.
+- **Reconciled with the brief's principle 1** (the army is the main source of
+  power) by counting the army as a whole: one strong attack a turn against
+  many, with the overlord's action also needed for raising and his life the
+  only way to lose. Detail in GDD 14.1.
+- Effect on the simulated battles: 171 player wins of 200 (was 162). The
+  scripted player does not attack with the overlord, so this understates the
+  change.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |

@@ -37,7 +37,7 @@ for the first session there is `MAC_SETUP.md`.
   walls. It can be stepped one unit at a time for animation.
 - **Data files**: 20 units, rule constants, type chart, AI weights, and the
   16 × 12 slice map.
-- **112 tests**, passing locally. GitHub Actions runs them on every push.
+- **113 tests**, passing locally. GitHub Actions runs them on every push.
 - **Mac plan** (`MAC_SETUP.md`): what to install, what Adam must do in person
   and in what order, how Claude Code drives Xcode, what a free account allows,
   what the simulator cannot show, and the first task (a fold prototype).
@@ -79,7 +79,7 @@ part-way.
   reach (GDD section 10).
 - An open, flat, portrait layout is not designed (GDD 12.1).
 - Balance. The numbers are first-pass. Against a competent scripted player the
-  slice gives 162 wins and 34 losses in 200 battles, which may be too easy;
+  slice gives 171 wins and 20 losses in 200 battles, which may be too easy;
   only a person playing can say.
 
 ## Next

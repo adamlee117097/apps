@@ -411,7 +411,7 @@ import Testing
     /// The stat tables of GDD sections 5.1 to 5.3 and 6, typed in again here so that a slip in
     /// units.json fails a test. Columns: type, HP, Mgt, Grd, Wrd, Mov, min range, max range, Hit, Avoid, Crit.
     static let design: [String: (type: UnitType, numbers: [Int])] = [
-        "overlord": (.sovereign, [24, 14, 3, 4, 4, 1, 2, 90, 10, 0]),
+        "overlord": (.sovereign, [24, 10, 3, 4, 4, 1, 2, 90, 10, 0]),
         "gravespeaker": (.sovereign, [14, 7, 2, 4, 4, 1, 2, 85, 10, 0]),
         "skeleton": (.bone, [18, 10, 4, 1, 4, 1, 1, 85, 5, 0]),
         "bone_archer": (.bone, [14, 9, 2, 1, 4, 2, 2, 90, 5, 5]),
@@ -441,15 +441,6 @@ import Testing
             #expect(d.type == row.type, "\(id) has the wrong type")
             #expect([d.maxHP, d.might, d.guard, d.ward, d.move, d.minRange, d.maxRange, d.hit, d.avoid, d.crit] == row.numbers,
                     "\(id) differs from the design table")
-        }
-    }
-
-    /// Adam's decision of 2026-11-26: the overlord hits harder than any of his minions.
-    @Test func theOverlordHitsHarderThanAnyUndead() throws {
-        let data = try GameData.bundled()
-        let overlord = try #require(data.units["overlord"])
-        for unit in data.units.values where !unit.isLiving && !unit.overlord {
-            #expect(overlord.might > unit.might, "\(unit.id) hits as hard as the overlord")
         }
     }
 

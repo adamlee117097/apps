@@ -314,7 +314,7 @@ priority target in one or two.
 ## 6. The overlord
 
 - The player names the overlord. A default name will be workshopped with the title (13.4).
-- Before choosing a path (Rise): Sovereign type, HP 24, Mgt 14, Grd 3, Wrd 4,
+- Before choosing a path (Rise): Sovereign type, HP 24, Mgt 10, Grd 3, Wrd 4,
   Mov 4, Rng 1–2, magic damage, Raise Range 2.
 - The overlord gains levels from battles won and objectives met, level 1 to 10.
   Level raises the command cap (3.5) and the overlord's stats.
@@ -325,7 +325,7 @@ priority target in one or two.
 | | Death Knight | Lich King |
 |---|---|---|
 | Overlord's role (agreed) | Front line | Back line |
-| Overlord stats at level 3 | HP 34, Mgt 15, Grd 7, Wrd 3, Mov 4, Rng 1, physical | HP 22, Mgt 14, Grd 2, Wrd 6, Mov 4, Rng 1–3, magic |
+| Overlord stats at level 3 | HP 34, Mgt 13, Grd 7, Wrd 3, Mov 4, Rng 1, physical | HP 22, Mgt 12, Grd 2, Wrd 6, Mov 4, Rng 1–3, magic |
 | Army (agreed) | Few, elite | Many, weak |
 | Command cap | 4 rising to 7 | 6 rising to 12 |
 | Raise Range | 1 (must stand next to the body) | 3 |
@@ -417,9 +417,9 @@ Raise Range.
 
 Measured on the slice map over 200 seeded battles against a competent scripted
 player (the overlord walks to bodies and raises them; other units use the same
-planning as the enemy): 171 player wins, 20 losses, 9 unfinished after 80
-turns; 1,374 raises, 190 consecrations and 124 corpse burnings. Against a
-player that never seeks out bodies: 2 wins, 197 losses, 1 unfinished. Raising decides the
+planning as the enemy): 162 player wins, 34 losses, 4 unfinished after 80
+turns; 1,319 raises, 183 consecrations and 122 corpse burnings. Against a
+player that never seeks out bodies: 2 wins, 198 losses. Raising decides the
 battle, which is the intent. These are scripted players, not people; balance
 still needs a human.
 
@@ -645,7 +645,7 @@ noted.
 
 | # | Principle | Draft 2 | Verdict |
 |---|---|---|---|
-| 1 | Army is the main source of power | The overlord had the attack of a Skeleton and no damage spells | Changed by Adam: the overlord now hits hardest. See below for how the army stays the main source of power |
+| 1 | Army is the main source of power | The overlord had the attack of a Skeleton and no damage spells | Decided by Adam: the overlord starts modest and becomes the hardest hitter once well levelled. See 14.1 |
 | 2 | Feels like an army | Caps of 4 to 7 (Death Knight) and 6 to 12 (Lich King) | **Too small.** Twelve units is not a swarm |
 | 3 | Minions scale | Only the Death Knight's raised units gain levels. Lich King units never improve | **Missing** |
 | 4 | Real corpses only | Every unit comes from a body on the map, including the keep's Charnel Pit, which places bodies | Holds |
@@ -655,35 +655,54 @@ noted.
 
 ### 14.1 Overlord power (principle 1; decided by Adam 2026-11-26)
 
-Adam's decision: **the overlord hits harder than any of his minions.** Might is
-now 14 before a path is chosen (the strongest undead, the Oathbreaker, has 13),
-15 for the Death Knight and 14 for the Lich King at level 3. A test fails if
-any undead ever matches the overlord's Might.
+Adam's decision, in two parts: the overlord should hit harder than any of his
+minions, **but only once he has really levelled up.** He rises from nothing, so
+he starts as a modest fighter whose power is the army he raises, and grows into
+the strongest piece on the board.
+
+Proposed curve for the overlord's Might. The last column is the best ordinary
+undead he could field at that level, counting the scaling proposed in 14.3
+(Oathbreaker, 13 at level 1).
+
+| Overlord level | No path | Death Knight | Lich King | Best ordinary undead |
+|---|---|---|---|---|
+| 1 | 10 | | | 13 |
+| 2 | 11 | | | 13 |
+| 3 (path chosen) | | 13 | 12 | 14 |
+| 4 | | 14 | 13 | 14 |
+| 5 | | 15 | 14 | 15 |
+| 6 | | 16 | 15 | 15 |
+| 7 (promotion) | | 18 | 17 | 16 |
+| 8 | | 19 | 18 | 16 |
+| 9 | | 20 | 19 | 17 |
+| 10 | | 21 | 20 | 17 |
+
+- **Levels 1 to 4:** his best minions hit harder than he does. In the slice he
+  has the attack of a Skeleton.
+- **Levels 5 and 6:** he draws level.
+- **From the promotion at level 7** (Blackguard or Archlich) he hits harder than
+  anything he commands, and the gap widens to the end.
+- Raised named heroes are a separate question: whether a raised hero may out-hit
+  a level 10 overlord is open (14.7).
+
+Rule for future balance: from level 7 on, the overlord's Might stays at least 1
+above the highest Might of any ordinary undead he can field.
 
 How this sits with principle 1, that most damage and board control come from
-the army:
+the army, even late:
 
-- The overlord is the strongest single piece, but acts once a turn like every
-  unit, and an army of five to twenty-four acts five to twenty-four times. The
-  army's total damage stays several times the overlord's.
-- **The overlord's action is contested.** Attacking and raising both use it, so
-  every hard hit is a body left on the ground.
-- **Using that strength is a risk.** The overlord is the only fail state, and to
-  strike he has to be within reach of the enemy.
-- The overlord still has no area damage and no way to act twice by attacking.
-  His multipliers go to the army (raise, empower, command).
+- The overlord is one piece and acts once a turn. By level 7 the army has nine
+  to sixteen units (14.2), so its total damage stays several times his.
+- **His action is contested.** Attacking and raising both use it.
+- **Using that strength is a risk.** He is the only fail state, and to strike he
+  has to be within the enemy's reach.
+- He gains no area damage and no extra attacks. His multipliers go to the army.
 
-Rules for future balance:
+If testing shows a high-level overlord dealing more than about a third of all
+damage, the fix is to the army's strength or his risk, not to this curve.
 
-1. At every level the overlord's Might is at least 1 above the highest Might of
-   any undead he can field at that level, including after the scaling in 14.3.
-2. Measured in whole battles, the army deals most of the damage. If testing
-   shows the overlord dealing more than about a third of it, the fix is to the
-   army's strength or the overlord's risk, not to the rule above.
-
-Not yet measured: the scripted test player never attacks with the overlord, so
-the test battles show only the effect on his counterattacks. A person playing
-will use him more.
+Not in the code: the rules have no overlord levels yet. The data holds the
+level 1 overlord, with Might 10.
 
 ### 14.2 A larger command cap (principle 2)
 
@@ -751,7 +770,7 @@ could go into the slice if Adam wants to feel it there.
   acted, and give one order: advance on a target, hold, or attack at will. Each
   unit then acts using the same planner the enemy uses.
 - The bar for "good enough to rely on": that planner already drives the
-  player's army in the test battles, where it wins 171 of 200 with a simple
+  player's army in the test battles, where it wins 162 of 200 with a simple
   overlord script. Before group orders ship, the same test must hold on a
   swarm-sized battle, and units under a group order must never take an action
   the forecast shows as a likely death without the player choosing it.
@@ -783,4 +802,6 @@ This is campaign design for later phases. The slice does not need it.
 3. Dominion (14.4): add it, and should it be in the vertical slice?
 4. Group orders (14.5): is that what you mean by an auto-control option?
 5. Notoriety (14.6): is this the direction, for when the campaign is designed?
+6. The overlord's Might curve in 14.1: is level 7 the right point for him to
+   become the hardest hitter? And may a raised named hero out-hit him?
 

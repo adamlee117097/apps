@@ -200,23 +200,24 @@ non-negotiable. The brief is now kept in the repository as `docs/BRIEF.md`.
   undead, a Dominion aura around the overlord, group orders, and a Notoriety
   score. **They await Adam's review.** No code was changed.
 
-## 2026-11-26: The overlord hits hardest
+## 2026-11-26: The overlord hits hardest, once levelled up
 
 Claude had proposed that the overlord deal no more damage than the player's best
 ordinary unit, to keep the army the main source of power. Adam's words: "I
 disagree. I feel like the Overlord should hit the hardest than any of his
-minions."
+minions." Claude first applied that from the start of the game. Adam then
+clarified: "But that's like after he's really leveled up, though."
 
-- **Decision:** the overlord's Might is above that of every undead unit. Base
-  overlord 10 to 14; Death Knight 13 to 15; Lich King 12 to 14. A test enforces
-  it for the data that exists.
-- **Reconciled with the brief's principle 1** (the army is the main source of
-  power) by counting the army as a whole: one strong attack a turn against
-  many, with the overlord's action also needed for raising and his life the
-  only way to lose. Detail in GDD 14.1.
-- Effect on the simulated battles: 171 player wins of 200 (was 162). The
-  scripted player does not attack with the overlord, so this understates the
-  change.
+- **Decision:** the overlord starts modest and grows into the hardest-hitting
+  piece on the player's side.
+- **Proposed curve** (GDD 14.1): Might 10 at level 1; level with his best
+  minions around levels 5 and 6; clearly above them from the promotion at
+  level 7. The level 7 threshold is Claude's proposal, to be confirmed.
+- **Code:** the level 1 overlord is back to Might 10, as before. The rules have
+  no overlord levels yet, so the curve is design only. The change made and
+  reverted the same day left the data and the 112 tests as they were.
+- **Principle 1** (the army is the main source of power) is kept by counting the
+  army as a whole. Detail in GDD 14.1.
 
 ## Gates
 

@@ -107,7 +107,7 @@ part-way.
    use, and is that account on paid billing? That project's memory is on Adam's
    own computer and is not readable from a cloud session. The API key must
    never be committed or pasted into chat. Two more questions about the art are
-   in `ART_PIPELINE.md` section 6.
+   in `ART_PIPELINE.md` section 7.
 4. How much free disk space does the Mac have, and which macOS version? (Claude
    Code will check both when it runs there.)
 5. Do you own an Apple Pencil (USB-C), and is the phone on iOS 27.2 or later?

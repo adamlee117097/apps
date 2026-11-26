@@ -318,7 +318,37 @@ cheaper model hold a style, does a coloured background come out clean, does the
 model accept undead and corpse subjects, how does it do with a pixel grid, and
 what does an image really cost once thinking tokens are counted.
 
-## 6. Questions for Adam
+## 6. Art direction notes
+
+**Reference shared by Adam, 2026-11-26.** A painted illustration of an armoured
+dark lord: horned crown-helm with glowing eyes in a dark visor, heavy blackened
+plate with skull motifs, a fur mantle, a torn crimson cloak and sash, a great
+sword carried on the shoulder, and one gauntlet lit from within. It appears to
+be character art from an existing game. The image is **not stored in this
+repository** and must not be: it is someone else's artwork.
+
+How it may be used, given the project's rules (original IP only) and section 4
+(Apple 5.2.1, Google's policy on others' rights):
+
+- As a mood reference only. It is never given to the image generator as a
+  reference image, never named or described by its source in a prompt, and
+  never traced.
+- What to take from it, in general terms that many works share: a heavy,
+  readable silhouette; dark metal against one strong accent colour; a single
+  point of inner light; trophies and fur that say "warlord" before "wizard".
+- What must be our own: the helm and crown shape, the emblem language (ours
+  should come from this game's world, not generic skulls), the colour scheme,
+  the weapon, and the proportions.
+- It suits the Death Knight overlord path. The Lich King path needs its own
+  look.
+- It points toward high-resolution painted 2D and away from pixel art. At map
+  size a unit is about 44 points across, so the silhouette and one accent
+  matter far more than surface detail; the detail would live in portraits,
+  menus and the store page.
+- It is darker and more realistic than the current mock-ups. That is fine for
+  a 13+ rating, but store imagery still has to suit all ages (section 4).
+
+## 7. Questions for Adam
 
 1. Which Google product and model did Gravewright use, and was it the API with
    billing or the AI Studio web page? If it used `gemini-2.5-flash-image`, that

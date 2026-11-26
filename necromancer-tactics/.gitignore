@@ -27,3 +27,7 @@ xcuserdata/
 .env.*
 
 # Engine-specific entries are added after GATE 1.
+
+# Python
+__pycache__/
+*.pyc

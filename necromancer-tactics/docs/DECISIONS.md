@@ -11,8 +11,7 @@ Each entry: date, decision, reason. Newest at the bottom.
   and CI. Writing the game's files at the root would overwrite those. A
   subdirectory touches nothing that exists and can be moved to a dedicated
   repository later.
-- **Status:** Provisional. Made by Claude to avoid blocking; Adam to confirm or
-  name a dedicated repository.
+- **Status:** Confirmed. Adam kept this location at GATE 1 (see below).
 
 ## 2026-11-25: Separate cloud environment for research
 

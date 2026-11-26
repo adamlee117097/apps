@@ -805,3 +805,51 @@ This is campaign design for later phases. The slice does not need it.
 6. The overlord's Might curve in 14.1: is level 7 the right point for him to
    become the hardest hitter? And may a raised named hero out-hit him?
 
+## 15. Ideas drawn from Adam's references (proposed)
+
+On 2026-11-26 Adam shared two references: a painted armoured dark lord, and the
+anime *Overlord*, with the instruction to draw inspiration from it. Both are
+other people's work. This game takes **ideas and mood only**: no names,
+characters, places, plot, dialogue or designs.
+
+Sourcing: the screenshot Adam sent shows the title, the genre tags (among them
+"Villains"), a synopsis and four episode titles. Everything else below about the
+series is from Claude's general knowledge of it and was not checked against a
+source in this session.
+
+What the series does well that fits this game, and how it could appear here:
+
+| Idea | In this game | Status |
+|---|---|---|
+| The ruler has named lieutenants, each with a strong personality, a domain to guard, and fierce loyalty | Raised named heroes become **lieutenants**. Each can be posted to a part of the keep and fights there in keep-defence battles; each has a voice and an opinion of the overlord | New. Builds on the agreed "raise defeated heroes" and the keep |
+| The stronghold is a place with its own defenders, level by level | Keep-defence maps are made of the rooms the player built (section 8), each held by the lieutenant posted there | Extends section 8 |
+| A village the ruler spares or protects becomes his | A second reaction beside fear: **Fealty**. Sparing or defending a village can make it a vassal that gives tribute and bodies willingly, where terror makes it flee or resist. Notoriety (14.6) becomes two things the world tracks: how feared, and how obeyed | Extends 14.6 |
+| The outside world misjudges him, schemes against him, and is slowly outmatched | Enemy factions act on what they believe about the overlord. Early, they send too little; as Notoriety grows they send holy orders and named heroes (already agreed for the Reckoning act) | Fits the agreed arc |
+| The ruler is at his most frightening late, when he finally acts himself | Matches Adam's decision that the overlord becomes the hardest hitter only once well levelled (14.1) | Decided |
+| Told from the villain's side, without apology, with the heroes as the threat | Already the pitch | Agreed |
+| Raising the fallen is shown as a display of power, not a chore | The raise should be the most satisfying action in the game: its own animation, sound and haptic (hardware feature 5) | Presentation goal |
+
+Look, as mood only (art notes are in `ART_PIPELINE.md`):
+
+- The armoured dark lord suits the **Death Knight** path: blackened steel, one
+  accent colour, one point of inner light.
+- The anime's ruler is a robed skeletal sorcerer in rich colour and gold. That
+  silhouette family, a tall robed figure with a crowned skull, suits the **Lich
+  King** path, with a design, colours and emblems of our own.
+
+Two cautions:
+
+- Both references are titled *Overlord*. This game calls its player character
+  "the overlord" as an ordinary word. The final title should not use that word,
+  to avoid confusion with either (inference, not legal advice; a trademark
+  check belongs with the title workshop).
+- The tone of the series includes comedy built on its particular characters.
+  That is theirs. Whether this game has humour at all is Adam's call.
+
+Questions for Adam:
+
+1. Lieutenants posted to parts of the keep: yes?
+2. Fear and Fealty as two separate reactions from the world: yes, or keep one
+   score?
+3. Should the game have any humour, or stay grim?
+

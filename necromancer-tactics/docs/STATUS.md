@@ -97,6 +97,8 @@ part-way.
    design falls short on three (army size, minion scaling, auto-control) and is
    thin on two more. The proposed changes and five questions are in `GDD.md`
    section 14. None is in the code yet.
+   Section 15 adds ideas from two references Adam shared (lieutenants, vassal
+   villages, a look for each path), with three more questions.
 
 1. Critical hits were added along with hit chances. Keep them, or misses only?
 2. Rule decisions made while fixing review findings, listed in `DECISIONS.md`

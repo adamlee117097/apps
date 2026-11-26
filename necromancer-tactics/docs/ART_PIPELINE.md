@@ -348,6 +348,14 @@ How it may be used, given the project's rules (original IP only) and section 4
 - It is darker and more realistic than the current mock-ups. That is fine for
   a 13+ rating, but store imagery still has to suit all ages (section 4).
 
+**Second reference, 2026-11-26.** Adam asked that the game also draw
+inspiration from the anime *Overlord*, whose ruler is a robed skeletal sorcerer
+in rich colour and gold. The same limits apply: mood only, nothing copied, the
+screenshot is not stored, and neither the title nor any character is ever named
+in a prompt. For art, it points to a robed, crowned-skull silhouette for the
+**Lich King** path, as the armoured figure does for the Death Knight path. The
+game-design ideas taken from it are in GDD section 15.
+
 ## 7. Questions for Adam
 
 1. Which Google product and model did Gravewright use, and was it the API with

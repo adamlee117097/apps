@@ -930,6 +930,11 @@ Also on the page: the price is $5.99, the category is Roleplaying, the size is
 mention in-app purchases. The star average was not in the text Claude could
 read.
 
+Adam owns this game and has it on his phone (he said so on 2026-11-26 and sent
+its title screen). He is therefore the first-hand source on how it plays;
+Claude still has not played it. What the title screen shows is noted in
+`ART_PIPELINE.md` section 6.
+
 What this means for the project (inference):
 
 - A paid necromancer game with a large raised army exists on the App Store and

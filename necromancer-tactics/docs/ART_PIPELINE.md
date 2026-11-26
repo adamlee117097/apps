@@ -375,6 +375,31 @@ joints.
 - The mark's colour and form must be our own. The same limits apply as above:
   mood only, no image stored, and the series is never named in a prompt.
 
+**Fourth reference, 2026-11-26.** Adam sent the title screen of *Undead Horde*,
+a game he owns. Unlike the two series, this one Claude could see. The same
+limits apply: mood only, the image is not stored, and the game is never named
+in a prompt. What the screen shows:
+
+- A painted illustration, not pixel art: a horned necromancer in red above a
+  crowd of armoured skeletons, in a ruined village.
+- **One shared mark, seen first-hand.** Every undead has the same green glow in
+  its eyes, and the necromancer's hands and weapons carry it too. This is the
+  idea proposed above from memory of *Solo Leveling*; here it is visible, and
+  it does make the crowd read as one side. A green glow for necromancy is a
+  common convention, so our mark should be a different colour to stand apart.
+- **The dead wear what they wore in life.** The skeletons keep the helmets,
+  shields and armour of the soldiers they were. That matches this game's rule
+  that a body rises as a form of what it was, and it helps the player read
+  what a raised unit used to be.
+- Two colours carry the picture: cold green-teal for the undead and the scene,
+  and crimson for the leader, so the leader stands out from his own army.
+- The tone is lighter than the armoured dark lord: the start button reads
+  "Necromance!". That bears on the open question of humour (GDD 15.7).
+- The picture sits in a wide frame with a black band above it. If this is a
+  screenshot from the open inner display of the iPhone Duo, it shows how an
+  older game that has not been updated for the fold appears there. Claude does
+  not know which device it came from.
+
 ## 7. Questions for Adam
 
 1. Which Google product and model did Gravewright use, and was it the API with

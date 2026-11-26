@@ -102,6 +102,68 @@ would say yes to everything."
 - Tests use Swift Testing, which ships with the toolchain on Linux and macOS.
 - The cloud environment also allows `download.swift.org`, to install Swift.
 
+## 2026-11-25: The Mac
+
+Adam's words: "The Mac Mini I have has the 4th generation of Apple Silicon, and
+it has 16 gigabytes of RAM." He also showed an Apple order record: a Mac mini
+picked up on 1 July 2025 for $599.
+
+- Read as the Mac mini (2024) with an M4 and 16 GB. Inference from the price:
+  the base model with a 256 GB drive.
+- Apple lists it as compatible with macOS Tahoe 26 and macOS 27, and Xcode 27.2
+  runs on either. Sources: `MAC_SETUP.md` section 1.
+- Still unknown until checked on the Mac: installed macOS version, drive size,
+  free space.
+
+## 2026-11-26: Independent review, and what it changed
+
+Adam switched the session to its most thorough mode. Claude ran an independent
+review of the work so far with separate agents: a citation audit of
+`RESEARCH.md`, a code review of `NecroRules`, and new research on the Mac. The
+account's usage limit stopped the agents part-way, so some of the planned
+checks were done by Claude with scripts instead. What ran and what did not is
+in `STATUS.md`.
+
+Facts that changed:
+
+- **Game Center needs the paid program.** Apple's capability table gives it to
+  program members only. It is deferred; saves stay on the device.
+- **Unity does recognise iPhone Duo** as a device (release notes of 3 November
+  2026). It still has no hinge or fold-layout support, so the engine decision
+  stands.
+- **The open phone can be turned to portrait**, and Apple's statements on
+  locking orientation conflict. A layout for that pose is not designed yet.
+- **The simulator cannot send two-finger gestures or Pencil input** in Xcode
+  27.2. The folded view's whole-map overview therefore also gets a button.
+
+Rule decisions Claude made while fixing review findings. Each is small and
+reversible, and **each needs Adam's confirmation**:
+
+- **Undo covers only the latest move**, and only until another order is given.
+  Before, a moved unit could be put back after other units had acted on the
+  strength of its position (and two units could end up on one tile).
+- **Mend and Heal may target the overlord.** The design text said "an undead";
+  the code allowed any ally. Kept as any ally, since the overlord is the fail
+  state and has no other healing.
+- **Dismiss is for the player only.**
+- **Ability ranges mean "up to"** (burn within 2, consecrate within 2).
+- **Consecration cannot target a wall** and skips walls and water.
+- **A raised unit keeps the identity it had before it fell.**
+
+Engineering decisions:
+
+- Saves carry a format version and are validated on load.
+- The resource folder is `Data`, not `Resources`. A reviewer measured on Linux
+  that Foundation treats a folder named `Resources` as a bundle layout marker,
+  and found reports (not opened first-hand) that Xcode fails to sign such a
+  bundle. Unconfirmed on a Mac; the rename costs nothing.
+- Enemy AI weights live in `rules.json`.
+- Maps are checked for exactly one overlord, at least one enemy, and starting
+  undead within the cap.
+- The cloud environment also allows `ai.google.dev`, `policies.google.com` and
+  `aistudio.google.com`, for research on Google's image generation that has not
+  been done yet.
+
 ## Gates
 
 | Gate | Status | Date | Outcome |

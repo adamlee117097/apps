@@ -1,6 +1,7 @@
 # Game Design Document
 
-Working title: Necromancer Tactics. Draft 1, 2026-11-25. For review at GATE 2.
+Working title: Necromancer Tactics. Draft 2, 2026-11-26. GATE 2 decisions are in
+section 13.
 
 Status of what is in here:
 
@@ -8,7 +9,8 @@ Status of what is in here:
   without Adam.
 - **Proposed** items are Claude's first-pass design. All numbers are starting
   values to be tuned by playtest, and all of them live in data files, not code.
-- **Open** items are questions for GATE 2, collected in section 13.
+- Section 13 records what Adam decided at GATE 2. A heading marked "decided"
+  reflects those decisions; "proposed" marks design that has not been reviewed.
 
 All names of units, places and abilities are original to this project. Names
 marked (placeholder) are expected to change.
@@ -46,8 +48,9 @@ is over control of the bodies.
 - A unit's turn: **move** up to its Move value (4-direction steps, blocked by
   enemies and impassable terrain), then **one action**: Attack, Raise, a skill,
   or Wait. Acting ends the unit's turn.
-- **Undo (proposed):** a move can be undone freely until the unit acts. Attacks,
-  raises and skills ask for confirmation and cannot be undone.
+- **Undo:** the latest move can be taken back until the unit acts or another
+  order is given. Attacks, raises and skills ask for confirmation and cannot be
+  undone.
 
 ### 3.2 Combat (decided 2026-11-25: hit chances, in the Fire Emblem tradition)
 
@@ -88,9 +91,11 @@ every unit's Crit to 0 in `units.json` removes them.
   3.6).
 - A corpse records exactly what the unit was: its unit kind and, for your own
   undead, its skills and level. Raising it gives back that unit.
-- **Corpse piles (proposed):** a tile can hold any number of corpses. Units can
+- **Corpse piles (decided):** a tile can hold any number of corpses. Units can
   stand on and move through corpse tiles.
 - Corpses last until the battle ends unless destroyed.
+- A body keeps the identity of the unit it was. Raised again, it is the same
+  unit to the game and to the interface.
 - The overlord leaves no corpse. If the overlord falls, the battle is lost
   (agreed).
 
@@ -111,7 +116,7 @@ every unit's Crit to 0 in `units.json` removes them.
 
 - The cap limits how many undead you control at once, not counting the overlord.
 - At the cap, you cannot raise.
-- **Dismiss (proposed):** as a free action, once per phase, you may release one
+- **Dismiss (decided):** as a free action, once per phase, you may release one
   of your undead. It collapses into a corpse on its tile. This is how you swap
   a weak unit for a better body lying nearby, and it carries the same risk as
   any corpse: the enemy can burn it.
@@ -134,7 +139,7 @@ every unit's Crit to 0 in `units.json` removes them.
 
 | Threat | Rule (proposed details) | Player counterplay |
 |---|---|---|
-| **Consecration** | A cleric's Consecrate action blesses a target tile within range 2 and the four tiles next to it. Corpses there cannot be raised. The blessing lasts **until that cleric dies**. Each cleric keeps at most two blessed areas; a third replaces the oldest | Kill the cleric. Later: units with Defile remove a blessing |
+| **Consecration** | A cleric's Consecrate action blesses a target tile of open ground within range 2 and the four tiles next to it (walls and water are skipped). Corpses there cannot be raised. The blessing lasts **until that cleric dies**. Each cleric keeps at most two blessed areas; a third replaces the oldest | Kill the cleric. Later: units with Defile remove a blessing |
 | **Corpse burning** | Pyromancers (range 2) and paladins (adjacent) can spend their action to destroy every corpse on one tile. Those units are gone for good | Guard piles, raise quickly, kill or body-block the burner, avoid stacking deaths on one tile |
 | **Holy damage** | A unit killed by a Holy-type attack leaves no corpse | Keep valued units out of Holy reach when low; use type advantage against Holy units |
 | **Overlord is the fail state** | Overlord at 0 HP ends the battle in defeat | Positioning. The overlord must still get close enough to raise |
@@ -158,7 +163,7 @@ it is killed by Holy damage (agreed).
 | Terrain | Effect |
 |---|---|
 | Open ground | None |
-| Forest / rubble | Costs 2 Move to enter. +1 Guard to the unit on it |
+| Forest / rubble | Costs 2 Move to enter. +1 Guard to the unit on it, and attacks against it are 10 points less likely to hit |
 | Wall / deep water | Impassable |
 | Graveyard | Battle starts with one corpse of a listed kind on the tile |
 | Consecrated ground | State laid over any tile (3.6) |
@@ -172,7 +177,8 @@ another.
 - Undead types: **Bone** (skeletons), **Flesh** (ghouls), **Spirit** (wraiths).
 - Living types: **Steel** (soldiers and knights), **Flame** (fire users),
   **Holy** (clerics and paladins).
-- **Sovereign**: the overlord. Neutral against everything, so the unit whose
+- **Sovereign**: the overlord, and necromancer units such as the Gravespeaker.
+  Neutral against everything, so the unit whose
   death ends the battle is never subject to a surprise multiplier.
 
 Attacker is the row, defender is the column. **+** is ×1.5 damage, **−** is
@@ -198,10 +204,11 @@ How to remember it:
 On screen the matchup is always shown as an up or down arrow next to the
 forecast number, never by colour alone.
 
-## 5. Unit roster (proposed)
+## 5. Unit roster (first-pass numbers)
 
 Columns: HP, Mgt (Might), Grd (Guard), Wrd (Ward), Mov (Move), Rng (Range; "2"
-means exactly 2, "1–2" means either), Dmg (P physical, M magic).
+means exactly 2, "1–2" means either), Dmg (P physical, M magic). Ranges given for
+abilities and for Raise Range, such as "range 2", mean up to that distance.
 
 ### 5.1 Undead
 
@@ -215,7 +222,7 @@ means exactly 2, "1–2" means either), Dmg (P physical, M magic).
 | Oathbreaker | Flesh | 28 | 13 | 6 | 5 | 4 | 1 | P | Defile: action, removes consecration from its tile and adjacent tiles |
 | Shade | Spirit | 12 | 9 | 5 | 3 | 5 | 1 | M | Drift: ignores terrain movement costs |
 | Ash Wraith | Spirit | 14 | 11 | 2 | 5 | 4 | 1–2 | M | None |
-| Hollow Priest | Spirit | 16 | 8 | 2 | 6 | 4 | 1–2 | M | Mend: action, restores 6 HP to an undead within 2 |
+| Hollow Priest | Spirit | 16 | 8 | 2 | 6 | 4 | 1–2 | M | Mend: action, restores 6 HP to an ally within 2, the overlord included |
 | Gravespeaker | Sovereign | 14 | 7 | 2 | 4 | 4 | 1–2 | M | Raise (range 1). A necromancer unit. Lich King path only (section 7) |
 
 ### 5.2 The living, and what they become
@@ -260,8 +267,9 @@ Hit, Avoid and Crit are percentages.
 | Ash Wraith | 85 | 10 | 0 | | | | | |
 | Hollow Priest | 90 | 10 | 0 | | | | | |
 
-Typical chances: 75 to 85 percent in an even matchup, about 95 with type
-advantage, about 65 with disadvantage. Fast, light units (Shade, Scout, hounds)
+An even matchup is typically 75 to 85 percent. Type advantage adds 15 points
+and disadvantage takes 15 away, so disadvantaged attacks land between 40 and 75
+percent of the time depending on the pairing. Fast, light units (Shade, Scout, hounds)
 are the hard ones to hit.
 
 ### 5.4 Checking the numbers
@@ -284,7 +292,7 @@ priority target in one or two.
 
 ## 6. The overlord
 
-- The player names the overlord. A default name is an open item (13.4).
+- The player names the overlord. A default name will be workshopped with the title (13.4).
 - Before choosing a path (Rise): Sovereign type, HP 24, Mgt 10, Grd 3, Wrd 4,
   Mov 4, Rng 1–2, magic damage, Raise Range 2.
 - The overlord gains levels from battles won and objectives met, level 1 to 10.
@@ -316,8 +324,7 @@ adds a signature ability:
 - **Archlich:** Phylactery. Once per battle, when the overlord would fall, the
   overlord instead returns at 1 HP on the starting tile.
 
-Whether the promotion lines were meant for the overlord or for units is an open
-item (13.6).
+Adam confirmed at GATE 2 that these are the overlord's own ranks (13.6).
 
 Stretch goal (agreed as stretch): a hidden hybrid path. Not designed yet.
 
@@ -356,31 +363,50 @@ strongest units in the game (agreed).
 | Inquisitor | Flame | Pyre: burns all corpses within 2 of a target tile | Both | Elite Spirit unit with an area attack |
 | Witch Hunter | Steel | Silence: a hit on a raiser stops it raising next phase | Both | Elite Flesh unit that silences enemy abilities |
 
-## 10. Enemy AI (proposed, for the slice)
+## 10. Enemy AI (built for the slice)
 
-The AI scores each possible action by its expected value: what a hit is worth
-times its chance to land. Given the same battle state it always chooses the
-same action. Priorities, highest
-first:
+The AI has no randomness of its own. Each enemy unit looks at every tile it can
+reach and every action it could take from there, and scores each by expected
+value: what success is worth times its chance, minus the expected cost of the
+enemy's reply. The weights are data (`rules.json`, under `ai`), so behaviour is
+tuned without code changes. What the weights are set to produce:
 
-1. Kill the overlord if it can be done this phase.
-2. **Clerics** move toward the largest group of unconsecrated corpses within
-   reach of the overlord or a raiser, and consecrate it. They heal when an ally
-   is badly hurt and no corpse target is worth more.
-3. **Pyromancers and paladins** burn or purge the most valuable corpse pile they
-   can reach. Value is the summed strength of the units in the pile, raised for
-   piles the player could raise next phase.
-4. Everyone else attacks the target with the best damage-for-damage trade,
-   preferring type advantage, kills, and raisers.
-5. Holy units prefer finishing blows, since their kills leave no corpse.
-6. Units avoid ending their move on a tile where they would die and leave a
-   corpse within the overlord's Raise Range, when a safer tile gives the same
-   attack.
+1. **Kill the overlord if the phase can.** When the enemies still to act could
+   bring the overlord to zero between them, every one that can reach it attacks,
+   whatever the reply costs them.
+2. **Clerics** consecrate the bodies a raiser could reach next phase, choosing
+   the spot that covers the most value. Bodies no raiser can reach count for a
+   quarter. A cleric at its two-area limit counts what a new blessing would
+   uncover, so it does not cycle. It heals a badly hurt ally when no reachable
+   body is worth more.
+3. **Pyromancers and paladins** burn the most valuable pile in reach, more
+   readily if a raiser could get to it and less if it is already on consecrated
+   ground.
+4. Everyone else attacks where the expected trade is best. Type advantage,
+   kills and raisers score higher. A unit that can land a hit attacks rather
+   than waits, unless the reply would probably kill it.
+5. Holy units prefer kills, since those leave no corpse.
+6. A badly hurt unit with nothing useful to do falls back toward a healer.
+   Units with nothing in reach walk toward their goal by the shortest route
+   round walls. Clerics and fire users with no bodies to deny stay with the
+   fighters.
+
+Not built: avoiding a death that would leave a corpse within the overlord's
+Raise Range.
+
+Measured on the slice map over 200 seeded battles against a competent scripted
+player (the overlord walks to bodies and raises them; other units use the same
+planning as the enemy): 162 player wins, 34 losses, 4 unfinished after 80
+turns; 1,319 raises, 183 consecrations and 122 corpse burnings. Against a
+player that never seeks out bodies: 2 wins, 198 losses. Raising decides the
+battle, which is the intent. These are scripted players, not people; balance
+still needs a human.
 
 The player can see what the AI is going for: a toggle shows enemy threat range,
-and corpse piles an enemy can burn or consecrate next phase are marked.
+and corpse piles an enemy can burn or consecrate next phase are marked. The
+rules module provides both as queries.
 
-## 11. Campaign (agreed arc, structure open)
+## 11. Campaign (agreed arc; hybrid structure decided)
 
 1. **Rise:** three to four small skirmishes that teach raising, the cap,
    consecration and burning, one at a time. Ends with the path choice.
@@ -388,7 +414,7 @@ and corpse piles an enemy can burn or consecrate next phase are marked.
 3. **Reckoning:** named heroes hunt the overlord, including assaults on the
    keep.
 
-Structure options for GATE 2:
+Structure options considered:
 
 | Option | What it is | For | Against |
 |---|---|---|---|
@@ -396,7 +422,7 @@ Structure options for GATE 2:
 | Roguelite | Each run generates a region, enemies and heroes; overlord death ends the run | High replay value; suits "overlord is the only fail state" | Needs map generation and much more balance work; weaker story |
 | Hybrid | Fixed three-act spine with hand-made key battles; between them, generated raids for Dread and bodies | Story plus replay; generated battles reuse the same rules | More systems than linear |
 
-Recommendation: **hybrid**, built as linear first. The vertical slice and the
+Decided at GATE 2: **hybrid**, built as linear first. The vertical slice and the
 Rise act are hand-made either way, so the decision does not affect work before
 GATE 3.
 
@@ -404,14 +430,21 @@ GATE 3.
 
 ### 12.1 Facts and assumptions
 
-- The inner display is landscape when open (2670 × 1878 pixels). The outer
-  display is portrait when closed (1398 × 2034 pixels). Source: RESEARCH.md
-  section 1.
+- The inner display is wider than tall in the natural open pose (2670 × 1878
+  pixels), and the outer display is taller than wide when closed (1398 × 2034
+  pixels). Source: RESEARCH.md section 1.
+- The open phone can also be turned to portrait, and Apple's statements on
+  locking orientation conflict (RESEARCH.md 3.1). **An open, flat, portrait
+  layout is not designed yet.** Until it is, the game lays out whatever size it
+  is given, and that pose gets the folded layout scaled up.
 - The slice map is **16 columns by 12 rows**, landscape, matching the inner
   display.
 - Point sizes are not yet known (RESEARCH.md 6.1). The layouts below assume
-  3 pixels per point: about 890 × 626 pt inner and 466 × 678 pt outer. They must
-  be re-checked on the Mac.
+  3 pixels per point and that the app draws at the panel's pixel size: about
+  890 × 626 pt inner and 466 × 678 pt outer. Inference: if the app instead draws
+  at App Store Connect's inner screenshot size (2853 × 2007 pixels), the inner
+  display would be about 951 × 669 pt, which leaves more room, not less. Both
+  must be measured on the Mac (MAC_SETUP.md section 7).
 - Apple's minimum for a frequently used touch target is 44 × 44 pt. A tile the
   player taps should be at least that.
 
@@ -432,9 +465,9 @@ for a side panel and 98 pt for a top bar.
 |  .  .  .  .  .  A  .  .  x2 .  .  K  .  .  .  .          +--------------+
 |  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .          |  FORECAST    |
 |  .  .  #  .  .  .  .  .  .  .  .  .  Y  .  .  .          |  Ghoul > Clr |
-|  .  .  #  #  .  .  .  .  .  .  .  .  .  .  .  .          |  15 dmg  ^   |
-|  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .          |  Kills       |
-|  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .          |  Counter: -  |
+|  .  .  #  #  .  .  .  .  .  .  .  .  .  .  .  .          |  15 ^  85%   |
+|  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .          |  Kills if hit|
+|  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .          |  Reply 4 65% |
 |  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .          +--------------+
 +----------------------------------------------------------+ [Raise]      |
                                                            | [Skill]      |
@@ -470,7 +503,7 @@ display therefore shows **part of the map** at full tile size and scrolls.
 |  .  .  .  .  .  .  .  .  .   |
 +------------------------------+
 | GHOUL Flesh  HP 17/22   [i]  |
-| > Cleric: 15 dmg ^  Kills    |
+| > Cleric 15 ^ 85%  reply 4   |
 +------------------------------+
 | +------+  [Raise]  [Skill]   |
 | | mini |  [Wait]   [Undo]    |
@@ -480,7 +513,8 @@ display therefore shows **part of the map** at full tile size and scrolls.
 ```
 
 - About 9 columns by 9 rows of 48 pt tiles are visible. Drag to scroll; pinch
-  out for a whole-map overview in which tiles are too small to command but can
+  out, or tap an Overview button, for a whole-map overview in which tiles are
+  too small to command but can
   be tapped to jump the camera.
 - The mini-map shows the whole field and the current view. Tapping it moves the
   camera.
@@ -510,7 +544,7 @@ assumption.
 |  T4 Player phase              Cap 4/5      |
 |  .  .  #  #  .  .  .  .  .  .  .  +  +  .  |
 |  .  O  .  .  G  .  .  x  .  .  +  C  +  .  |   top half: map only,
-|  .  .  .  S  .  .  .  .  .  M  .  +  .  P  |   whole field, 39 pt tiles,
+|  .  .  .  S  .  .  .  .  .  M  .  +  .  P  |   whole field, 34 to 37 pt tiles,
 |  .  .  .  .  .  A  .  .  x2 .  .  K  .  .  |   not touched
 |  .  .  #  .  .  .  .  .  .  .  .  .  Y  .  |
 +============================================+   fold
@@ -564,7 +598,8 @@ assumption.
 
 ## 13. GATE 2 outcomes
 
-All resolved on 2026-11-25. Details and Adam's words are in `DECISIONS.md`.
+Decided on 2026-11-25, except where a row says otherwise. Details and Adam's
+words are in `DECISIONS.md`.
 
 | # | Item | Outcome |
 |---|---|---|
@@ -572,7 +607,7 @@ All resolved on 2026-11-25. Details and Adam's words are in `DECISIONS.md`.
 | 2 | Personal or App Store | Eventual App Store release |
 | 3 | Art | Sprites from Google's image generation (setup as used for Gravewright). Pixel art vs high-resolution still to be chosen after display measurements |
 | 4 | Title, overlord name | To be workshopped |
-| 5 | Randomness | **Changed:** hit chances and criticals, as in section 3.2 |
+| 5 | Randomness | **Changed:** hit chances, as in section 3.2. Critical hits were added with them and await Adam's confirmation |
 | 6 | Promotion lines | The overlord's own ranks |
 | 7 | Holy damage | A unit killed by Holy damage leaves no corpse |
 | 8 | Corpse piles | Yes |

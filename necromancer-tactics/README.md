@@ -12,13 +12,17 @@ the bodies on the field. Original world, characters and lore.
 | `docs/DECISIONS.md` | Log of gate decisions with dates and reasons. |
 | `docs/RESEARCH.md` | Phase 0 research with sources. |
 | `docs/GDD.md` | Game design document. |
+| `docs/MAC_SETUP.md` | Checklist and sourced plan for the first session on the Mac. |
+| `docs/research-notes/` | Raw notes from research agents. Leads, not reviewed text. |
+| `tools/citations/` | Scripts that check the quotations in the docs against the pages they cite. |
 | `NecroRules/` | Swift package with the game rules and their tests. |
 
 ## Running the tests
 
 The game rules are a Swift package with no Apple-only dependencies, so the tests
-run on Linux and macOS alike. Swift 6.4 or later is needed (Xcode 27 includes
-it; on Linux, install from <https://www.swift.org/install/linux/>).
+run on Linux and macOS alike. The package declares Swift tools version 6.0. It has only been built and tested
+with Swift 6.4.3 (Xcode 27 includes Swift 6.4; on Linux, install from
+<https://www.swift.org/install/linux/>).
 
 ```sh
 cd necromancer-tactics/NecroRules
@@ -39,9 +43,19 @@ GitHub Actions runs the same command on every push that touches
 The Xcode project for the app will be added beside `NecroRules/` and will
 depend on it as a local package, so nothing here needs to move.
 
+## Checking the documents
+
+The research documents quote their sources. To re-check every quotation against
+the page it cites (needs network access to the cited sites):
+
+```sh
+cd necromancer-tactics
+python3 tools/citations/check_doc.py docs/RESEARCH.md docs/MAC_SETUP.md
+```
+
 ## Repository note
 
 This project currently lives in the `necromancer-tactics/` subdirectory of a
 repository whose root is an unrelated project (Pixlet apps). Everything for the
 game is kept inside this directory so it can be moved to its own repository
-without changes. See the open question in `docs/STATUS.md`.
+without changes. Adam chose to keep it here at GATE 1 (`docs/DECISIONS.md`).

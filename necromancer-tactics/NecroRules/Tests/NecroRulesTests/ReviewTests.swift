@@ -471,3 +471,160 @@ import Testing
         #expect(r.maxConsecrationsPerCaster == 2)
     }
 }
+
+/// Tests written to close gaps found by mutation testing on 2026-11-26: each of these code
+/// changes used to pass the whole suite unnoticed.
+@Suite struct MutationGapTests {
+    @Test func enemiesBlockTheWay() throws {
+        let f = try Fixture(rows: ["....."], units: [P(unit: "skeleton", side: .player, x: 0, y: 0), P(unit: "militia", side: .enemy, x: 1, y: 0)])
+        let reach = f.engine.reachable(for: f.unit("skeleton"), in: f.state)
+        #expect(reach[Position(2, 0)] == nil)
+        #expect(reach[Position(3, 0)] == nil)
+        #expect(reach.count == 1)
+    }
+
+    @Test func anAttackThatCannotPierceStillDealsOne() throws {
+        // Warhound might 8 against a Dread Knight on rough ground: guard 7 + 1. Nothing gets through, so damage is the minimum, 1.
+        let f = try Fixture(rows: ["...", ".f.", "..."], units: [P(unit: "dread_knight", side: .player, x: 1, y: 1), P(unit: "warhound", side: .enemy, x: 2, y: 1)])
+        #expect(f.engine.forecast(attacker: f.unit("warhound", .enemy), defender: f.unit("dread_knight"), in: f.state).strike.damage == 1)
+    }
+
+    @Test func damageEqualToHealthIsAKill() throws {
+        var f = try Fixture(units: [P(unit: "skeleton", side: .player, x: 1, y: 1), P(unit: "militia", side: .enemy, x: 2, y: 1),
+                                    P(unit: "militia", side: .enemy, x: 7, y: 4)])
+        f.state.units[1].hp = 5
+        let forecast = f.engine.forecast(attacker: f.unit("skeleton"), defender: f.state.units[1], in: f.state)
+        #expect(forecast.strike.damage == 5)
+        #expect(forecast.strike.kills)
+        #expect(!forecast.strike.killsOnCritical)
+        try f.apply(.attack(unit: f.id("skeleton"), target: 2))
+        #expect(f.state.unit(id: 2) == nil)
+    }
+
+    @Test func forecastSaysWhetherAKillWouldLeaveABody() throws {
+        let f = try Fixture(units: [P(unit: "overlord", side: .player, x: 1, y: 1), P(unit: "shade", side: .player, x: 1, y: 2),
+                                    P(unit: "cleric", side: .enemy, x: 3, y: 2), P(unit: "knight", side: .enemy, x: 2, y: 1)])
+        // A Holy attacker leaves no body.
+        #expect(!f.engine.forecast(attacker: f.unit("cleric", .enemy), defender: f.unit("shade"), in: f.state).leavesCorpse)
+        // The overlord leaves no body whoever kills it.
+        #expect(!f.engine.forecast(attacker: f.unit("knight", .enemy), defender: f.unit("overlord"), in: f.state).leavesCorpse)
+        // An ordinary kill does.
+        #expect(f.engine.forecast(attacker: f.unit("knight", .enemy), defender: f.unit("shade"), in: f.state).leavesCorpse)
+    }
+
+    @Test func alliesCannotBeAttacked() throws {
+        var f = try Fixture(units: [P(unit: "skeleton", side: .player, x: 1, y: 1), P(unit: "ghoul", side: .player, x: 2, y: 1),
+                                    P(unit: "militia", side: .enemy, x: 7, y: 4)])
+        #expect(throws: RuleError.invalidTarget) { try f.apply(.attack(unit: f.id("skeleton"), target: f.id("ghoul"))) }
+        #expect(f.unit("ghoul").hp == 22)
+    }
+
+    @Test func enemiesCannotBeHealed() throws {
+        var f = try Fixture(units: [P(unit: "hollow_priest", side: .player, x: 1, y: 1), P(unit: "militia", side: .enemy, x: 3, y: 1)])
+        f.state.units[1].hp = 5
+        #expect(throws: RuleError.invalidTarget) { try f.apply(.heal(unit: f.id("hollow_priest"), target: f.id("militia", .enemy))) }
+        #expect(f.unit("militia", .enemy).hp == 5)
+    }
+
+    @Test func healingStopsAtFullHealth() throws {
+        var f = try Fixture(units: [P(unit: "overlord", side: .player, x: 1, y: 1), P(unit: "hollow_priest", side: .player, x: 2, y: 1),
+                                    P(unit: "militia", side: .enemy, x: 7, y: 4)])
+        f.state.units[0].hp = 22
+        let events = try f.apply(.heal(unit: f.id("hollow_priest"), target: f.id("overlord")))
+        #expect(f.unit("overlord").hp == 24)
+        #expect(events == [.healed(unit: f.id("overlord"), amount: 2)])
+    }
+
+    @Test func aZeroChanceNeverHits() throws {
+        var f = try Fixture(certainHits: false, units: [P(unit: "ghoul", side: .player, x: 1, y: 1), P(unit: "knight", side: .enemy, x: 2, y: 1)])
+        for key in f.data.units.keys { f.data.units[key]!.hit = -100 }
+        let engine = Engine(data: f.data)
+        let ghoul = f.id("ghoul"), knight = f.id("knight", .enemy)
+        #expect(engine.forecast(attacker: f.unit("ghoul"), defender: f.unit("knight", .enemy), in: f.state).strike.hitChance == 0)
+        for _ in 0..<1500 {
+            let events = try engine.apply(.attack(unit: ghoul, target: knight), to: &f.state)
+            #expect(events == [.missed(attacker: ghoul, defender: knight, isCounter: false), .missed(attacker: knight, defender: ghoul, isCounter: true)])
+            try engine.apply(.endPhase, to: &f.state)
+            try engine.apply(.endPhase, to: &f.state)
+        }
+        #expect(f.unit("knight", .enemy).hp == 24)
+        #expect(f.unit("ghoul").hp == 22)
+    }
+
+    @Test func anOverlordBodyCanNeverBeRaised() throws {
+        var f = try Fixture(units: [P(unit: "overlord", side: .player, x: 1, y: 1), P(unit: "militia", side: .enemy, x: 7, y: 4)])
+        // Maps refuse such a body; put one in directly to check the rule itself.
+        f.state.corpses.append(Corpse(id: 50, unitID: 60, definitionID: "overlord", side: .player, position: Position(2, 1)))
+        #expect(f.engine.raisableCorpses(for: f.unit("overlord"), in: f.state).isEmpty)
+        #expect(throws: RuleError.invalidTarget) { try f.apply(.raise(unit: f.id("overlord"), corpse: 50)) }
+    }
+
+    @Test func aSaveWithImpossibleHealthIsRefused() throws {
+        let data = try GameData.bundled()
+        let state = try GameState(map: GameData.bundledMap("slice01"), data: data, seed: 3)
+        for bad in [999, 0] {
+            var json = try #require(JSONSerialization.jsonObject(with: state.saved()) as? [String: Any])
+            var s = json["state"] as! [String: Any]
+            var units = s["units"] as! [[String: Any]]
+            units[2]["hp"] = bad
+            s["units"] = units
+            json["state"] = s
+            let bytes = try JSONSerialization.data(withJSONObject: json)
+            #expect(throws: SaveError.self) { try GameState.load(bytes, data: data) }
+        }
+    }
+
+    @Test func aPoorTradeIsStillBetterThanWaiting() throws {
+        // A warhound beside a Dread Knight deals 1 and takes a likely 8 back. It does not die to the reply, so it attacks.
+        var f = try Fixture(width: 16, height: 5, certainHits: false, units: [
+            P(unit: "overlord", side: .player, x: 15, y: 0), P(unit: "dread_knight", side: .player, x: 2, y: 1), P(unit: "warhound", side: .enemy, x: 3, y: 1),
+        ])
+        try f.apply(.endPhase)
+        let plan = f.ai.plan(for: f.unit("warhound", .enemy), in: f.state)
+        #expect(plan.action == .attack(unit: f.id("warhound", .enemy), target: f.id("dread_knight")))
+        #expect(plan.score == 1)
+    }
+
+    @Test func fireGoesToTheBodiesARaiserCanReach() throws {
+        // Two knight bodies of equal value. Only the one at (5,2) is within the overlord's reach next phase.
+        var f = try Fixture(width: 16, height: 5, units: [P(unit: "overlord", side: .player, x: 0, y: 2), P(unit: "pyromancer", side: .enemy, x: 8, y: 2)],
+                            corpses: [C(unit: "knight", x: 9, y: 0), C(unit: "knight", x: 5, y: 2)])
+        try f.apply(.endPhase)
+        let plan = f.ai.plan(for: f.unit("pyromancer", .enemy), in: f.state)
+        #expect(plan.action == .burn(unit: f.id("pyromancer", .enemy), tile: Position(5, 2)))
+    }
+
+    @Test func fireIsNotWastedOnBodiesAlreadyOnBlessedGround() throws {
+        // The knight's body is worth more, but it is already denied by consecration. The militia's is not.
+        var f = try Fixture(width: 16, height: 5, units: [P(unit: "overlord", side: .player, x: 0, y: 2), P(unit: "pyromancer", side: .enemy, x: 8, y: 2)],
+                            corpses: [C(unit: "knight", x: 5, y: 1), C(unit: "militia", x: 5, y: 3)])
+        let pyromancer = f.id("pyromancer", .enemy)
+        f.state.consecrations = [Consecration(casterID: pyromancer, sequence: 1, tiles: [Position(5, 1)])]
+        f.state.nextSequence = 2
+        try f.apply(.endPhase)
+        let plan = f.ai.plan(for: f.unit("pyromancer", .enemy), in: f.state)
+        #expect(plan.action == .burn(unit: pyromancer, tile: Position(5, 3)))
+    }
+
+    @Test func clericDoesNotSpendItsTurnOnAScratch() throws {
+        var f = try Fixture(units: [P(unit: "overlord", side: .player, x: 0, y: 0), P(unit: "cleric", side: .enemy, x: 6, y: 2),
+                                    P(unit: "knight", side: .enemy, x: 7, y: 2)])
+        f.state.units[2].hp = 23
+        try f.apply(.endPhase)
+        let plan = f.ai.plan(for: f.unit("cleric", .enemy), in: f.state)
+        if case .heal = plan.action { Issue.record("the cleric healed a unit that was barely hurt") }
+    }
+
+    @Test func aBadlyHurtUnitFallsBackToItsHealer() throws {
+        var f = try Fixture(width: 16, height: 3, units: [P(unit: "overlord", side: .player, x: 0, y: 1), P(unit: "militia", side: .enemy, x: 8, y: 1),
+                                                        P(unit: "cleric", side: .enemy, x: 14, y: 1)])
+        f.state.units[1].hp = 4
+        try f.apply(.endPhase)
+        let hurt = f.ai.plan(for: f.unit("militia", .enemy), in: f.state)
+        #expect((hurt.moveTo?.x ?? 8) > 8)
+        // At full health the same unit advances on the overlord instead.
+        f.state.units[1].hp = 16
+        let healthy = f.ai.plan(for: f.unit("militia", .enemy), in: f.state)
+        #expect((healthy.moveTo?.x ?? 8) < 8)
+    }
+}

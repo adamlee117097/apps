@@ -41,9 +41,10 @@ How to read it:
   26 26.7.3". <https://support.apple.com/en-us/109033>
 - Inference: either an up-to-date macOS Tahoe or macOS 27 will do. The Mac does
   not have to move to macOS 27 for this project.
-- The Mac mini (2024) launched with macOS Sequoia ("macOS Sequoia completes the
-  new Mac mini experience", same press release as above), which is too old for
-  Xcode 27. What it runs today is unknown until `sw_vers` is run.
+- The Mac mini (2024) launched with macOS Sequoia: "macOS Sequoia completes the
+  new Mac mini experience".
+  <https://www.apple.com/newsroom/2024/10/apples-new-mac-mini-is-more-mighty-more-mini-and-built-for-apple-intelligence/>
+  That is too old for Xcode 27. What it runs today is unknown until `sw_vers` is run.
 
 ### Xcode
 

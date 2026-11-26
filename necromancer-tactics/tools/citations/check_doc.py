@@ -6,8 +6,10 @@ Usage:  python3 check_doc.py FILE.md [FILE.md ...]
 For every block of text (paragraph, list item or table row) this finds the quoted strings
 ("like this", 12 characters or more) and the links in the same block, and checks that each
 quote appears on at least one of those pages. A block with quotes but no link falls back to
-the links on the nearest "Source" line above it in the same section. Quotes with no link to
-check against are listed separately; they are not failures (they may be a person's words).
+the links on the nearest "Source" line (or introduction ending in a colon) above it in the
+same section. "tech talk 111461" is read as a link to that Apple Tech Talk, and "(same page)"
+as the links of the block before. Quotes with nothing to check against are counted
+separately; they are not failures (they may be a person's words).
 
 Exit code 0 if every checkable quote was found, 1 otherwise.
 """
@@ -67,6 +69,7 @@ def blocks(lines):
 def check(path):
     lines = open(path, encoding="utf-8").read().split("\n")
     section_sources, failures, unsourced, checked, unreachable = [], [], [], 0, []
+    previous_urls = []
     in_code = False
     cleaned = []
     for line in lines:
@@ -80,8 +83,19 @@ def check(path):
             section_sources = []
             continue
         urls = [(a or b).rstrip(".,;") for a, b in URL.findall(text)]
-        if re.match(r"(\*\*)?(Main )?[Ss]ources?\b", text.lstrip("-* ")) and urls:
-            section_sources = urls
+        # References by name: "tech talk 111461" is Apple's Tech Talk with that number.
+        for number in re.findall(r"[Tt]ech [Tt]alk (\d{6})", text):
+            talk = "https://developer.apple.com/videos/play/tech-talks/%s/" % number
+            if talk not in urls:
+                urls.append(talk)
+        # "(same page)" and "same tech talk" point at the links of the block before.
+        if re.search(r"\bsame (page|tech talk|article|press release)\b", text) :
+            urls += [u for u in previous_urls if u not in urls]
+        # A line that names sources for what follows: "Source: <link>", or an introduction ending in a colon.
+        if urls and (re.search(r"\b[Ss]ources?\b", text) or text.rstrip().endswith(":")):
+            section_sources = list(urls)
+        if urls:
+            previous_urls = list(urls)
         quotes = [a or b for a, b in QUOTE.findall(re.sub(r"`[^`]*`", lambda m: m.group(0).replace('"', "'"), text))]
         for q in quotes:
             candidates = urls + [s for s in section_sources if s not in urls]

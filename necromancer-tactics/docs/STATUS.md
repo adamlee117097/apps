@@ -41,8 +41,12 @@ for the first session there is `MAC_SETUP.md`.
 - **Mac plan** (`MAC_SETUP.md`): what to install, what Adam must do in person,
   how Claude Code drives Xcode, what a free account allows, what the simulator
   cannot show, and the first task (a fold prototype).
+- **Art research** (`ART_PIPELINE.md`): Google's current image models, cost,
+  terms, watermarking, Apple's rules, and a proposed pipeline. Nothing has been
+  generated.
 - **Citation checker** (`tools/citations`): every quotation in `RESEARCH.md`
-  (126) and `MAC_SETUP.md` (65) is checked against its source page by script.
+  (126), `MAC_SETUP.md` (65) and `ART_PIPELINE.md` (28) is checked against its
+  source page by script.
 
 ## Review of 2026-11-26: what ran and what did not
 
@@ -57,11 +61,11 @@ part-way.
 | Code review: engine edge cases and saves | Completed. Findings fixed |
 | Code review: enemy AI | Agent did not run. The other two reviewers covered much of it; Claude fixed what they found and measured 200 seeded battles |
 | Code review: public API | Agent did not run. Claude compiled and ran a client that uses only the public API |
-| Code review: mutation testing | Agent did not run. Claude scripted it: 53 code changes, 38 caught, 15 missed. A test was added for each miss |
+| Code review: mutation testing | Agent did not run. Claude scripted it: of 53 deliberate code changes the tests caught 38 and missed 15. Tests were added; a rerun caught 14 of the 15. The last was a redundant check, now removed |
 | Second-agent verification of the code findings | Did not run. Claude reproduced each bug with a test before fixing it |
 | Mac research, four researchers | Completed. Quotations machine-checked (110 of 110 found) |
 | Second-agent verification of the Mac research, and a completeness critic | Did not run |
-| Research on Google image generation for sprites | Did not run. Still to do |
+| Research on Google image generation for sprites | Agents did not run. Claude read Google's and Apple's pages directly and wrote `ART_PIPELINE.md`; its 28 quotations are machine-checked, its reasoning has had no second reader |
 
 ## Not done yet in the rules package
 
@@ -81,9 +85,8 @@ part-way.
    in section 3; then the fold prototype in section 7.
 2. Then Phase 2: the app target with SwiftUI and SpriteKit on top of
    `NecroRules`, ending at GATE 3 with Adam playing the slice on his phone.
-3. Before any art is made: research Google's image generation from primary
-   sources (models, cost, terms for commercial use, watermarking, App Store
-   rules). The pages are reachable from the cloud environment now.
+3. Before any art is made: the one-unit trial in `ART_PIPELINE.md` section 5,
+   which needs the API key and Adam's answers to that file's questions.
 
 ## Open questions for Adam
 
@@ -93,9 +96,10 @@ part-way.
    the overlord; Dismiss is player-only; ability ranges mean "up to". Confirm
    or change.
 3. Which Google image generation product and model did the Gravewright project
-   use? That project's memory is on Adam's own computer and is not readable
-   from a cloud session. The API key must never be committed or pasted into
-   chat.
+   use, and is that account on paid billing? That project's memory is on Adam's
+   own computer and is not readable from a cloud session. The API key must
+   never be committed or pasted into chat. Two more questions about the art are
+   in `ART_PIPELINE.md` section 6.
 4. How much free disk space does the Mac have, and which macOS version? (Claude
    Code will check both when it runs there.)
 5. Do you own an Apple Pencil (USB-C), and is the phone on iOS 27.2 or later?

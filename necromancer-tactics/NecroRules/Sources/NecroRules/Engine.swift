@@ -330,8 +330,9 @@ public struct Engine: Sendable {
 
     /// The unit a corpse would become if raised. Nil if it cannot be raised at all.
     public func raisedDefinitionID(for corpse: Corpse) -> String? {
-        guard let def = data.units[corpse.definitionID], !def.overlord else { return nil }
+        guard let def = data.units[corpse.definitionID] else { return nil }
         let id = def.isLiving ? def.raisesAs : def.id
+        // An overlord is never raised, whether the body is one or would become one.
         guard let id, let raised = data.units[id], !raised.overlord else { return nil }
         return id
     }

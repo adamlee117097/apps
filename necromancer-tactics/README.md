@@ -13,6 +13,7 @@ the bodies on the field. Original world, characters and lore.
 | `docs/RESEARCH.md` | Phase 0 research with sources. |
 | `docs/GDD.md` | Game design document. |
 | `docs/MAC_SETUP.md` | Checklist and sourced plan for the first session on the Mac. |
+| `docs/ART_PIPELINE.md` | What Google's and Apple's terms say about generated sprites, cost, and the proposed pipeline. |
 | `docs/research-notes/` | Raw notes from research agents. Leads, not reviewed text. |
 | `tools/citations/` | Scripts that check the quotations in the docs against the pages they cite. |
 | `NecroRules/` | Swift package with the game rules and their tests. |
